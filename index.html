@@ -17,7 +17,7 @@
     }
     header {
       padding: 60px 20px 20px;
-      text-align: center;
+      text-align: left;
     }
     header h1 {
       font-size: 48px;
@@ -26,6 +26,7 @@
     }
     nav {
       margin-top: 10px;
+      text-align: center;
     }
     nav a {
       margin: 0 15px;
@@ -63,37 +64,145 @@
       font-size: 14px;
       color: #888;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      font-weight: 700;
+      background-color: #f8f8f8;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .blog-list {
+      list-style: none;
+      padding: 0;
+    }
+    .blog-list li {
+      margin-bottom: 30px;
+    }
+    .blog-date {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+    .blog-list a {
+      color: #111;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .blog-list a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
 <header>
   <h1>Louicop</h1>
-  <nav>
-    <a href="#about">À propos</a>
-    <a href="#projects">Projets</a>
-    <a href="#contact">Contact</a>
-  </nav>
 </header>
 
 <main>
   <section id="about">
-    <h2>À propos</h2>
-    <p>Je suis Louicop, passionné de développement web et créatif dans l'âme. Voici mon univers.</p>
+    <h2>About me</h2>
+    <p>Je suis Louicop, investisseur et créatif.</p>
   </section>
 
-  <section id="projects">
-    <h2>Projets</h2>
-    <ul>
-      <li>Projet 1 — Description rapide</li>
-      <li>Projet 2 — Description rapide</li>
-      <li>Projet 3 — Description rapide</li>
+  <section id="portfolio">
+    <h2>Portfolio</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date of Investment</th>
+          <th>Current Stage</th>
+          <th>Theme</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Company 1</td>
+          <td>Jan 2024</td>
+          <td>Seed</td>
+          <td>AI</td>
+        </tr>
+        <tr>
+          <td>Company 2</td>
+          <td>Mar 2024</td>
+          <td>Series A</td>
+          <td>Fintech</td>
+        </tr>
+        <tr>
+          <td>Company 3</td>
+          <td>Dec 2023</td>
+          <td>Pre-seed</td>
+          <td>Web3</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="blog">
+    <h2>Blog</h2>
+    <ul class="blog-list">
+      <li>
+        <div class="blog-date">Feb 25, 2024</div>
+        <a href="https://louicop.medium.com/" target="_blank">Agents-Powered B2B Marketplaces</a>
+      </li>
+      <li>
+        <div class="blog-date">Nov 25, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">Some Thoughts on Software</a>
+      </li>
+      <li>
+        <div class="blog-date">Jun 28, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">Vertical Software in 2024</a>
+      </li>
+      <li>
+        <div class="blog-date">Feb 27, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">AI-first Service Businesses</a>
+      </li>
+      <li>
+        <div class="blog-date">Jan 26, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">Vertical Software 2.0</a>
+      </li>
+      <li>
+        <div class="blog-date">Sep 6, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">The State of European B2B Marketplaces</a>
+      </li>
+      <li>
+        <div class="blog-date">May 10, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">Learnings Exploring the GPT/LLM Space</a>
+      </li>
+      <li>
+        <div class="blog-date">Apr 11, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">9 Things Graneet Got Right To Be "Series A-Ready"</a>
+      </li>
+      <li>
+        <div class="blog-date">Mar 31, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">Designing the Right Business Model as a B2B Marketplace</a>
+      </li>
+      <li>
+        <div class="blog-date">Feb 8, 2023</div>
+        <a href="https://louicop.medium.com/" target="_blank">Democratising Agricultural Best Practices and Bringing Farmers' Products Online</a>
+      </li>
     </ul>
   </section>
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Vous pouvez me contacter par email : <a href="mailto:ton-email@example.com">ton-email@example.com</a></p>
+  <section id="music">
+    <h2>Music</h2>
+    <p>Ma collection musicale et compositions.</p>
+  </section>
+
+  <section id="art">
+    <h2>Art</h2>
+    <p>Mes créations artistiques.</p>
   </section>
 </main>
 
