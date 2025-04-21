@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Louicop - Portfolio</title>
+  <title>Louis Coppey</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -16,27 +16,14 @@
       font-size: 18px;
     }
     header {
-      padding: 60px 20px 20px;
-      text-align: left;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 20px 20px 20px;
     }
     header h1 {
       font-size: 48px;
       font-weight: 700;
-      margin-bottom: 10px;
-    }
-    nav {
-      margin-top: 10px;
-      text-align: center;
-    }
-    nav a {
-      margin: 0 15px;
-      text-decoration: none;
-      color: #111;
-      font-weight: 400;
-      font-size: 18px;
-    }
-    nav a:hover {
-      text-decoration: underline;
+      margin: 0;
     }
     main {
       max-width: 800px;
@@ -101,50 +88,192 @@
     .blog-list a:hover {
       text-decoration: underline;
     }
+    .artwork-image {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      margin: 20px 0;
+      display: block;
+    }
+    .portfolio-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .portfolio-table th, .portfolio-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .portfolio-table th {
+      font-weight: 700;
+      background-color: #f8f8f8;
+      cursor: pointer;
+    }
+    .portfolio-table tr:hover {
+      background-color: #f5f5f5;
+    }
+    .portfolio-table th:nth-child(5),
+    .portfolio-table td:nth-child(5) {
+      width: 200px;
+      min-width: 200px;
+    }
+    .portfolio-table th:nth-child(1) {
+      width: 120px;
+    }
+    .portfolio-table th:nth-child(2) {
+      width: 140px;
+    }
+    .portfolio-table th:nth-child(3),
+    .portfolio-table td:nth-child(3) {
+      width: 160px;
+      min-width: 160px;
+    }
+    .portfolio-table th:nth-child(4),
+    .portfolio-table td:nth-child(4) {
+      width: 180px;
+      min-width: 180px;
+    }
+    .filter-container {
+      margin-bottom: 20px;
+    }
+    .theme-filter {
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      font-family: 'Space Grotesk', sans-serif;
+    }
   </style>
+  <script>
+    let portfolioData = [];
+
+    async function loadPortfolioData() {
+      try {
+        const response = await fetch('Portfolio.csv');
+        const csvText = await response.text();
+        
+        // Clean the CSV text and handle multiline values
+        const cleanCsvText = csvText
+          .replace(/%$/, '')
+          .replace(/\n /g, ' ') // Remove line breaks that are followed by a space (continuation lines)
+          .trim();
+        
+        const rows = cleanCsvText.split('\n').filter(row => row.trim());
+        
+        // Skip header row and parse data
+        portfolioData = rows.slice(1).map(row => {
+          // Split by semicolon but preserve semicolons within quotes
+          const columns = row.match(/(?:\"[^\"]*\"|[^;]+)/g);
+          const [company, date, location, stage, theme] = columns.map(cell => 
+            cell.replace(/"/g, '').trim()
+          );
+          return { company, date, location, stage, theme };
+        });
+
+        // Sort by date in descending order
+        portfolioData.sort((a, b) => {
+          // Convert dates like "Dec-16" to "Dec 2016" for proper parsing
+          const parseDate = (dateStr) => {
+            const [month, year] = dateStr.split('-');
+            return new Date(`${month} 20${year}`);
+          };
+          
+          try {
+            const dateA = parseDate(a.date);
+            const dateB = parseDate(b.date);
+            return dateB - dateA;
+          } catch (error) {
+            console.error('Error parsing dates:', error);
+            return 0;
+          }
+        });
+
+        // Get unique themes for filter
+        const themes = ['All', ...new Set(portfolioData.map(item => item.theme).sort())];
+        
+        // Create theme filter
+        const filterContainer = document.getElementById('theme-filter-container');
+        filterContainer.innerHTML = `
+          <select class="theme-filter" onchange="filterByTheme(this.value)">
+            ${themes.map(theme => `<option value="${theme}">${theme}</option>`).join('')}
+          </select>
+        `;
+
+        // Initial render
+        renderTable(portfolioData);
+
+        console.log('Data loaded successfully:', portfolioData);
+      } catch (error) {
+        console.error('Error loading portfolio data:', error);
+        // Display error message in the table
+        const tableBody = document.getElementById('portfolio-table-body');
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; color: red;">
+              Error loading data. Please check the console for details.
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function renderTable(data) {
+      const tableBody = document.getElementById('portfolio-table-body');
+      tableBody.innerHTML = data.map(row => `
+        <tr>
+          <td>${row.company}</td>
+          <td>${row.date}</td>
+          <td>${row.stage}</td>
+          <td>${row.location}</td>
+          <td>${row.theme}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filterByTheme(theme) {
+      const filteredData = theme === 'All' 
+        ? portfolioData 
+        : portfolioData.filter(item => item.theme === theme);
+      renderTable(filteredData);
+    }
+
+    // Load data when the page loads
+    window.addEventListener('load', loadPortfolioData);
+  </script>
 </head>
 <body>
 
 <header>
-  <h1>Louicop</h1>
+  <h1>Louis Coppey</h1>
 </header>
 
 <main>
   <section id="about">
-    <h2>About me</h2>
-    <p>Je suis Louicop, investisseur et créatif.</p>
+    <h2>About</h2>
+    <p>Hi, I am Louis. I studied math and computer science and I have been a Venture investor at Poine Nine for about 10 years. Most of my work is to study, invest in and work with software companies.</p>
+    <p>My current areas of interest include AI and Data Infrastructure, Vertical Software, B2B marketplaces and software that play a role in a more ecological and inclusive future.</p>
+    <p>I believe my role is to channel capital in businesses that move the world in the right direction.</p>
   </section>
 
   <section id="portfolio">
     <h2>Portfolio</h2>
-    <table>
+    <div class="filter-container" id="theme-filter-container">
+      <!-- Theme filter will be inserted here -->
+    </div>
+    <table class="portfolio-table">
       <thead>
         <tr>
           <th>Name</th>
           <th>Date of Investment</th>
           <th>Current Stage</th>
+          <th>Location</th>
           <th>Theme</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Company 1</td>
-          <td>Jan 2024</td>
-          <td>Seed</td>
-          <td>AI</td>
-        </tr>
-        <tr>
-          <td>Company 2</td>
-          <td>Mar 2024</td>
-          <td>Series A</td>
-          <td>Fintech</td>
-        </tr>
-        <tr>
-          <td>Company 3</td>
-          <td>Dec 2023</td>
-          <td>Pre-seed</td>
-          <td>Web3</td>
-        </tr>
+      <tbody id="portfolio-table-body">
+        <!-- Table content will be loaded dynamically from CSV -->
       </tbody>
     </table>
   </section>
@@ -154,60 +283,75 @@
     <ul class="blog-list">
       <li>
         <div class="blog-date">Feb 25, 2024</div>
-        <a href="https://louicop.medium.com/" target="_blank">Agents-Powered B2B Marketplaces</a>
+        <a href="https://louicop.medium.com/agents-powered-b2b-marketplaces-opportunities-for-ai-agents-in-a-marketplace-context-6a6438a6789e" target="_blank">Agents-Powered B2B Marketplaces - Opportunities for AI agents in a marketplace context</a>
       </li>
       <li>
         <div class="blog-date">Nov 25, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">Some Thoughts on Software</a>
+        <a href="https://louicop.medium.com/some-thoughts-on-software-consolidating-a-few-learnings-on-whats-happening-in-software-after-3-weeks-2024f7f5d5a6" target="_blank">Some Thoughts on Software - Consolidating a few learnings on what's happening in software after 3 weeks in the US</a>
       </li>
       <li>
         <div class="blog-date">Jun 28, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">Vertical Software in 2024</a>
+        <a href="https://louicop.medium.com/vertical-software-in-2024-some-more-recent-learnings-b8f1b091d71c" target="_blank">Vertical Software in 2024 - Some more recent learnings</a>
       </li>
       <li>
         <div class="blog-date">Feb 27, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">AI-first Service Businesses</a>
+        <a href="https://louicop.medium.com/ai-first-service-businesses-opportunities-for-new-ai-first-software-applications-c4ca2f61b271" target="_blank">AI-first Service Businesses - Opportunities for new AI-first software applications</a>
       </li>
       <li>
         <div class="blog-date">Jan 26, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">Vertical Software 2.0</a>
+        <a href="https://louicop.medium.com/vertical-software-2-0-expansion-opportunities-in-vertical-software-95b2d38be0e4" target="_blank">Vertical Software 2.0 - Expansion opportunities in vertical software</a>
       </li>
       <li>
         <div class="blog-date">Sep 6, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">The State of European B2B Marketplaces</a>
+        <a href="https://louicop.medium.com/the-state-of-european-b2b-marketplaces-the-2023-edition-of-our-market-map-and-some-learnings-d31d139aa6" target="_blank">The State of European B2B Marketplaces - The 2023 edition of our market map and some learnings</a>
       </li>
       <li>
         <div class="blog-date">May 10, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">Learnings Exploring the GPT/LLM Space</a>
+        <a href="https://louicop.medium.com/learnings-exploring-the-gpt-llm-space-notes-from-an-exploratory-trip-in-the-us-8d1d7fe1c059" target="_blank">Learnings Exploring the GPT/LLM Space - Notes from an exploratory trip in the US</a>
       </li>
       <li>
         <div class="blog-date">Apr 11, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">9 Things Graneet Got Right To Be "Series A-Ready"</a>
+        <a href="https://louicop.medium.com/9-things-graneet-got-right-to-be-series-a-ready-some-quick-thoughts-on-the-journey-to-pmf-in-d3e36f6b3dba" target="_blank">9 Things Graneet Got Right To Be "Series A-Ready" - Some quick thoughts on the journey to PMF in vertical SaaS</a>
       </li>
       <li>
         <div class="blog-date">Mar 31, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">Designing the Right Business Model as a B2B Marketplace</a>
+        <a href="https://louicop.medium.com/designing-the-right-business-model-as-a-b2b-marketplace-some-thoughts-and-some-learnings-from-faire-8e1d791df54f" target="_blank">Designing the Right Business Model as a B2B Marketplace - Some thoughts and some learnings from Faire</a>
       </li>
       <li>
         <div class="blog-date">Feb 8, 2023</div>
-        <a href="https://louicop.medium.com/" target="_blank">Democratising Agricultural Best Practices and Bringing Farmers' Products Online</a>
+        <a href="https://louicop.medium.com/democratising-agricultural-best-practices-and-bringing-farmers-products-online-our-investment-in-4c0b5d8e6de5" target="_blank">Democratising Agricultural Best Practices and Bringing Farmers' Products Online - Our investment in Wikifarmer</a>
       </li>
     </ul>
   </section>
 
   <section id="music">
     <h2>Music</h2>
-    <p>Ma collection musicale et compositions.</p>
+    <ul class="blog-list">
+      <li>
+        <div class="blog-date">Glenn Gould</div>
+        <a href="https://www.youtube.com/watch?v=Ah392lnFHxM" target="_blank">Bach: The Goldberg Variations, BWV 988 (1981 Recording)</a>
+      </li>
+      <li>
+        <div class="blog-date">Miles Davis</div>
+        <a href="https://www.youtube.com/watch?v=mSS5p9BdNGU" target="_blank">Sketches of Spain (1960)</a>
+      </li>
+    </ul>
   </section>
 
   <section id="art">
     <h2>Art</h2>
-    <p>Mes créations artistiques.</p>
+    <ul class="blog-list">
+      <li>
+        <div class="blog-date">Lee Ufan</div>
+        <a href="https://leeufanfoundation.org/" target="_blank">Lee Ufan Foundation - Official Website</a>
+        <img src="images/Lee Ufan.jpg" alt="Lee Ufan artwork" class="artwork-image">
+      </li>
+    </ul>
   </section>
 </main>
 
 <footer>
-  <p>© 2025 Louicop. Tous droits réservés.</p>
+  <p>© 2025 Louis Coppey. Tous droits réservés.</p>
 </footer>
 
 </body>
