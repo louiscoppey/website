@@ -1,36 +1,74 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Site</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon Portfolio - Louicop</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+    }
+    section {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 0.8em;
+      color: #777;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Mon Site Inspiré de LOUICOPLOUICOP</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Accueil</a></li>
-                <li><a href="#">À Propos</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section class="hero">
-        <h2>Un site simple et épuré</h2>
-        <p>Bienvenue sur mon site inspiré de convictions.com.</p>
-        <a href="#" class="btn">En savoir plus</a>
-    </section>
+<header>
+  <h1>Bienvenue sur mon portfolio</h1>
+  <nav>
+    <a href="#about">À propos</a>
+    <a href="#projects">Projets</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-    <section class="content">
-        <h2>Notre Vision</h2>
-        <p>Nous croyons en des principes forts et des valeurs authentiques.</p>
-    </section>
+<section id="about">
+  <h2>À propos</h2>
+  <p>Je suis Louicop, développeur passionné. Voici mon travail et mes projets.</p>
+</section>
 
-    <footer>
-        <p>&copy; 2025 Mon Site - Tous droits réservés.</p>
-    </footer>
+<section id="projects">
+  <h2>Projets</h2>
+  <ul>
+    <li>Projet 1 - Description rapide</li>
+    <li>Projet 2 - Description rapide</li>
+    <li>Projet 3 - Description rapide</li>
+  </ul>
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <p>Vous pouvez me contacter à : <a href="mailto:ton-email@example.com">ton-email@example.com</a></p>
+</section>
+
+<footer>
+  <p>© 2025 Louicop. Tous droits réservés.</p>
+</footer>
+
 </body>
 </html>
