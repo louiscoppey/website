@@ -266,6 +266,17 @@
       visibility: visible;
     }
 
+    /* Mobile specific rules */
+    @media (hover: none) {
+      .theme-toggle::after {
+        display: none;
+      }
+      
+      .theme-toggle:active::after {
+        display: none;
+      }
+    }
+
     .theme-toggle svg {
       width: 20px;
       height: 20px;
