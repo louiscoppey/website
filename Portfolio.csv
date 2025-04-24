@@ -1,25 +1,25 @@
 ﻿Company;"Date of initial
- investment";Location;Current stage;Theme
-Qwilr;Dec-16;Australia;Series A;Creative Software
-Hull;Dec-16;France/USA;Sold to MessageBird;Data and ML Infra
-Zentist;Mar-17;USA;Series B;Vertical Software
-CallDesk;Aug-17;France;Seed;Data and ML Infra
-PlayPlay;Jul-18;France;Series B;Creative Software
-cargo.one;Nov-18;Germany;Series B;Vertical Software
-Bearer;Jan-19;France/USA;Sold to XX;Data and ML Infra
-SuperAnnotate;Jan-20;Armenia/ USA;Series B;Data and ML Infra
-AMMP;Apr-20;The Netherlands;Seed;Vertical Software
-Soda;Apr-20;Belgium;Series B;Data and ML Infra
-Rooser;Sep-20;Scotland;Series A;Vertical Software
-Amenitiz;Dec-20;Spain;Series B;Vertical Software
-June;May-21;France/USA;Seed;Data and ML Infra
-Graneet;Jul-21;France;Series A;Vertical Software
-Podcastle;Aug-21;Armenia;Series A;Creative Software
-Cryptio;Mar-22;France;Series B;Fintech
-Figures;Aug-22;France;Series A;ESG
+ investment";Location;Current stage;Theme;Website
+Qwilr;Dec-16;Australia;Series A;Creative Software;www.qwilr.com
+Hull;Dec-16;France/USA;Sold to MessageBird;Data and ML Infra;www.hull.io
+Zentist;Mar-17;USA;Series B;Vertical Software;www.zentist.io
+CallDesk;Aug-17;France;Seed;Data and ML Infra;www.calldesk.com
+PlayPlay;Jul-18;France;Series B;Creative Software;www.playplay.com
+cargo.one;Nov-18;Germany;Series B;Vertical Software;www.cargo.one
+Bearer;Jan-19;France/USA;Sold to XX;Data and ML Infra;www.bearer.sh
+SuperAnnotate;Jan-20;Armenia/ USA;Series B;Data and ML Infra;www.superannotate.com
+AMMP;Apr-20;The Netherlands;Seed;Vertical Software;www.ammp.io
+Soda;Apr-20;Belgium;Series B;Data and ML Infra;www.soda.io
+Rooser;Sep-20;Scotland;Series A;Vertical Software;www.rooser.eu
+Amenitiz;Dec-20;Spain;Series B;Vertical Software;www.amenitiz.com
+June;May-21;France/USA;Seed;Data and ML Infra;www.june.so
+Graneet;Jul-21;France;Series A;Vertical Software;www.graneet.com
+Podcastle;Aug-21;Armenia;Series A;Creative Software;www.podcastle.io
+Cryptio;Mar-22;France;Series B;Fintech;www.cryptio.co
+Figures;Aug-22;France;Series A;ESG;www.figures.io
 Wikifarmer;Nov-22;"Greece/
- Cyprus";Series A;Vertical Software
-ZenML;Apr-23;Germany;Seed;Data and ML Infra
-Duplo;Feb-24;Nigeria;Seed;Fintech
-Beavr;Apr-24;France;Seed;ESG
-Audigo;Jul-24;USA;Seed;Creative Software
+ Cyprus";Series A;Vertical Software;www.wikifarmer.com
+ZenML;Apr-23;Germany;Seed;Data and ML Infra;www.zenml.io
+Duplo;Feb-24;Nigeria;Seed;Fintech;www.tryduplo.com
+Beavr;Apr-24;France;Seed;ESG;www.beavr.tech
+Audigo;Jul-24;USA;Seed;Creative Software;www.audigo.com

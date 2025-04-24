@@ -60,13 +60,11 @@
       font-size: 48px;
       font-weight: 700;
       margin: 0;
-      max-width: 800px;
-      margin: 0 auto;
     }
 
     main {
       max-width: 800px;
-      margin: 120px auto 80px;
+      margin: 160px auto 80px;
       padding: 0 20px;
     }
 
@@ -152,7 +150,7 @@
       width: 100%;
       max-width: 600px;
       height: auto;
-      margin: 20px 0;
+      margin: 20px auto;
       display: block;
     }
 
@@ -247,6 +245,23 @@
       transform: translateX(24px);
     }
 
+    /* Theme colors */
+    .theme-Creative-Software,
+    .theme-ESG,
+    .theme-Data-and-ML-Infra,
+    .theme-Vertical-Software,
+    .theme-Fintech {
+      color: var(--text-color);
+    }
+
+    [data-theme="dark"] .theme-Creative-Software,
+    [data-theme="dark"] .theme-ESG,
+    [data-theme="dark"] .theme-Data-and-ML-Infra,
+    [data-theme="dark"] .theme-Vertical-Software,
+    [data-theme="dark"] .theme-Fintech {
+      color: var(--text-color);
+    }
+
     /* Responsive Design */
     @media screen and (max-width: 768px) {
       body {
@@ -261,8 +276,12 @@
         font-size: 28px;
       }
       
+      header {
+        padding: 15px 20px;
+      }
+      
       main {
-        margin: 40px auto;
+        margin: 140px auto 40px;
       }
       
       section {
@@ -287,12 +306,17 @@
       .portfolio-table td:first-child {
         position: sticky;
         left: 0;
-        background-color: #fff;
+        background-color: var(--background-color);
         z-index: 1;
+        transition: background-color 0.3s ease;
+      }
+
+      .portfolio-table tr:hover td:first-child {
+        background-color: var(--hover-color);
       }
 
       .portfolio-table th:first-child {
-        background-color: #f8f8f8;
+        background-color: var(--table-header-bg);
         z-index: 2;
       }
 
@@ -309,7 +333,7 @@
       }
       
       header {
-        padding: 40px 15px 15px;
+        padding: 12px 15px;
       }
       
       header h1 {
@@ -317,6 +341,7 @@
       }
       
       main {
+        margin: 100px auto 40px;
         padding: 0 15px;
       }
       
@@ -328,6 +353,90 @@
   </style>
   <script>
     let portfolioData = [];
+    let blogData = [];
+    let musicData = [];
+    let artData = [];
+
+    function renderTable(data) {
+      const tableBody = document.getElementById('portfolio-table-body');
+      // Clear the table body
+      while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+      
+      // Create and append rows
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        
+        // Company name cell with optional link
+        const tdName = document.createElement('td');
+        if (row.url) {
+          const a = document.createElement('a');
+          // Ensure URL has protocol
+          const url = row.url.trim();
+          a.href = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+          a.target = '_blank';
+          a.textContent = row.company;
+          a.style.color = 'var(--text-color)';
+          a.style.textDecoration = 'none';
+          a.style.borderBottom = '1px dotted var(--text-color)';
+          tdName.appendChild(a);
+        } else {
+          tdName.textContent = row.company;
+        }
+        tr.appendChild(tdName);
+        
+        // Other cells
+        const tdDate = document.createElement('td');
+        tdDate.textContent = row.date;
+        tr.appendChild(tdDate);
+        
+        const tdStage = document.createElement('td');
+        tdStage.textContent = row.stage;
+        tr.appendChild(tdStage);
+        
+        const tdLocation = document.createElement('td');
+        tdLocation.textContent = row.location;
+        tr.appendChild(tdLocation);
+        
+        const tdTheme = document.createElement('td');
+        tdTheme.textContent = row.theme;
+        // Add theme color class
+        tdTheme.className = `theme-${row.theme.replace(/\s+/g, '-')}`;
+        tr.appendChild(tdTheme);
+        
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function filterByTheme(theme) {
+      const filteredData = theme === 'All' 
+        ? portfolioData 
+        : portfolioData.filter(item => item.theme === theme);
+      renderTable(filteredData);
+    }
+
+    // Create theme filter
+    function createThemeFilter(themes) {
+      const filterContainer = document.getElementById('theme-filter-container');
+      const select = document.createElement('select');
+      select.className = 'theme-filter';
+      select.addEventListener('change', (e) => filterByTheme(e.target.value));
+      
+      themes.forEach(theme => {
+        const option = document.createElement('option');
+        option.value = theme;
+        option.textContent = theme;
+        select.appendChild(option);
+      });
+      
+      // Clear the container
+      while (filterContainer.firstChild) {
+        filterContainer.removeChild(filterContainer.firstChild);
+      }
+      
+      filterContainer.appendChild(select);
+    }
 
     async function loadPortfolioData() {
       try {
@@ -346,10 +455,12 @@
         portfolioData = rows.slice(1).map(row => {
           // Split by semicolon but preserve semicolons within quotes
           const columns = row.match(/(?:\"[^\"]*\"|[^;]+)/g);
-          const [company, date, location, stage, theme] = columns.map(cell => 
+          console.log('Raw columns:', columns); // Debug log
+          const [company, date, location, stage, theme, url] = columns.map(cell => 
             cell.replace(/"/g, '').trim()
           );
-          return { company, date, location, stage, theme };
+          console.log('Parsed URL:', url); // Debug log
+          return { company, date, location, stage, theme, url };
         });
 
         // Sort by date in descending order
@@ -374,12 +485,7 @@
         const themes = ['All', ...new Set(portfolioData.map(item => item.theme).sort())];
         
         // Create theme filter
-        const filterContainer = document.getElementById('theme-filter-container');
-        filterContainer.innerHTML = `
-          <select class="theme-filter" onchange="filterByTheme(this.value)">
-            ${themes.map(theme => `<option value="${theme}">${theme}</option>`).join('')}
-          </select>
-        `;
+        createThemeFilter(themes);
 
         // Initial render
         renderTable(portfolioData);
@@ -387,36 +493,135 @@
         console.log('Data loaded successfully:', portfolioData);
       } catch (error) {
         console.error('Error loading portfolio data:', error);
-        // Display error message in the table
         const tableBody = document.getElementById('portfolio-table-body');
-        tableBody.innerHTML = `
-          <tr>
-            <td colspan="5" style="text-align: center; color: red;">
-              Error loading data. Please check the console for details.
-            </td>
-          </tr>
-        `;
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.style.textAlign = 'center';
+        td.style.color = 'red';
+        td.textContent = 'Error loading data. Please check the console for details.';
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
       }
     }
 
-    function renderTable(data) {
-      const tableBody = document.getElementById('portfolio-table-body');
-      tableBody.innerHTML = data.map(row => `
-        <tr>
-          <td>${row.company}</td>
-          <td>${row.date}</td>
-          <td>${row.stage}</td>
-          <td>${row.location}</td>
-          <td>${row.theme}</td>
-        </tr>
-      `).join('');
+    async function loadBlogData() {
+      try {
+        const response = await fetch('Blog.csv');
+        const csvText = await response.text();
+        const rows = csvText.split('\n').filter(row => row.trim());
+        
+        // Skip header row and parse data
+        blogData = rows.slice(1).map(row => {
+          const [date, title, url] = row.split(';').map(cell => cell.trim());
+          return { date, title, url };
+        });
+
+        // Sort by date in descending order
+        blogData.sort((a, b) => {
+          return new Date(b.date) - new Date(a.date);
+        });
+
+        // Render blog entries
+        const blogList = document.querySelector('#blog .blog-list');
+        blogList.innerHTML = '';
+        
+        blogData.forEach(entry => {
+          const li = document.createElement('li');
+          const dateDiv = document.createElement('div');
+          dateDiv.className = 'blog-date';
+          dateDiv.textContent = entry.date;
+          
+          const link = document.createElement('a');
+          link.href = entry.url;
+          link.target = '_blank';
+          link.textContent = entry.title;
+          
+          li.appendChild(dateDiv);
+          li.appendChild(link);
+          blogList.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Error loading blog data:', error);
+      }
     }
 
-    function filterByTheme(theme) {
-      const filteredData = theme === 'All' 
-        ? portfolioData 
-        : portfolioData.filter(item => item.theme === theme);
-      renderTable(filteredData);
+    async function loadMusicData() {
+      try {
+        const response = await fetch('Music.csv');
+        const csvText = await response.text();
+        const rows = csvText.split('\n').filter(row => row.trim());
+        
+        // Skip header row and parse data
+        musicData = rows.slice(1).map(row => {
+          const [artist, title, url] = row.split(';').map(cell => cell.trim());
+          return { artist, title, url };
+        });
+
+        // Render music entries
+        const musicList = document.querySelector('#music .blog-list');
+        musicList.innerHTML = '';
+        
+        musicData.forEach(entry => {
+          const li = document.createElement('li');
+          const artistDiv = document.createElement('div');
+          artistDiv.className = 'blog-date';
+          artistDiv.textContent = entry.artist;
+          
+          const link = document.createElement('a');
+          link.href = entry.url;
+          link.target = '_blank';
+          link.textContent = entry.title;
+          
+          li.appendChild(artistDiv);
+          li.appendChild(link);
+          musicList.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Error loading music data:', error);
+      }
+    }
+
+    async function loadArtData() {
+      try {
+        const response = await fetch('Art.csv');
+        const csvText = await response.text();
+        const rows = csvText.split('\n').filter(row => row.trim());
+        
+        // Skip header row and parse data
+        artData = rows.slice(1).map(row => {
+          const [artist, title, url, image] = row.split(';').map(cell => cell.trim());
+          return { artist, title, url, image };
+        });
+
+        // Render art entries
+        const artList = document.querySelector('#art .blog-list');
+        artList.innerHTML = '';
+        
+        artData.forEach(entry => {
+          const li = document.createElement('li');
+          const artistDiv = document.createElement('div');
+          artistDiv.className = 'blog-date';
+          artistDiv.textContent = entry.artist;
+          
+          const link = document.createElement('a');
+          link.href = entry.url;
+          link.target = '_blank';
+          link.textContent = entry.title;
+          
+          const img = document.createElement('img');
+          img.src = `images/${entry.image}`;
+          img.alt = `${entry.artist} artwork`;
+          img.className = 'artwork-image';
+          
+          li.appendChild(artistDiv);
+          li.appendChild(link);
+          li.appendChild(img);
+          artList.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Error loading art data:', error);
+      }
     }
 
     // Dark mode functionality
@@ -442,8 +647,13 @@
     // Initialize theme on page load
     initTheme();
 
-    // Load data when the page loads
-    window.addEventListener('load', loadPortfolioData);
+    // Load all data when the page loads
+    window.addEventListener('load', () => {
+      loadPortfolioData();
+      loadBlogData();
+      loadMusicData();
+      loadArtData();
+    });
   </script>
 </head>
 <body>
@@ -455,7 +665,7 @@
 
 <main>
   <section id="about">
-    <p>Hi, I am Louis. I studied math and computer science and I have been a Venture investor at Poine Nine for about 10 years. Most of my work is to study, invest in and work with software companies.</p>
+    <p>Hi, I am Louis. I studied math and computer science and I have been a Venture investor at <a href="https://www.pointnine.com" target="_blank" style="color: var(--text-color); text-decoration: underline;">Point Nine</a> for about 10 years. Most of my work consists in studying, investing in and working with software companies.</p>
     <p>My current areas of interest include AI and Data Infrastructure, Vertical Software, B2B marketplaces and software that play a role in a more ecological and inclusive future.</p>
     <p>I believe my role is to channel capital in businesses that move the world in the right direction.</p>
   </section>
@@ -484,71 +694,21 @@
   <section id="blog">
     <h2>Blog</h2>
     <ul class="blog-list">
-      <li>
-        <div class="blog-date">Feb 25, 2024</div>
-        <a href="https://louicop.medium.com/agents-powered-b2b-marketplaces-opportunities-for-ai-agents-in-a-marketplace-context-6a6438a6789e" target="_blank">Agents-Powered B2B Marketplaces - Opportunities for AI agents in a marketplace context</a>
-      </li>
-      <li>
-        <div class="blog-date">Nov 25, 2023</div>
-        <a href="https://louicop.medium.com/some-thoughts-on-software-consolidating-a-few-learnings-on-whats-happening-in-software-after-3-weeks-2024f7f5d5a6" target="_blank">Some Thoughts on Software - Consolidating a few learnings on what's happening in software after 3 weeks in the US</a>
-      </li>
-      <li>
-        <div class="blog-date">Jun 28, 2023</div>
-        <a href="https://louicop.medium.com/vertical-software-in-2024-some-more-recent-learnings-b8f1b091d71c" target="_blank">Vertical Software in 2024 - Some more recent learnings</a>
-      </li>
-      <li>
-        <div class="blog-date">Feb 27, 2023</div>
-        <a href="https://louicop.medium.com/ai-first-service-businesses-opportunities-for-new-ai-first-software-applications-c4ca2f61b271" target="_blank">AI-first Service Businesses - Opportunities for new AI-first software applications</a>
-      </li>
-      <li>
-        <div class="blog-date">Jan 26, 2023</div>
-        <a href="https://louicop.medium.com/vertical-software-2-0-expansion-opportunities-in-vertical-software-95b2d38be0e4" target="_blank">Vertical Software 2.0 - Expansion opportunities in vertical software</a>
-      </li>
-      <li>
-        <div class="blog-date">Sep 6, 2023</div>
-        <a href="https://louicop.medium.com/the-state-of-european-b2b-marketplaces-the-2023-edition-of-our-market-map-and-some-learnings-d31d139aa6" target="_blank">The State of European B2B Marketplaces - The 2023 edition of our market map and some learnings</a>
-      </li>
-      <li>
-        <div class="blog-date">May 10, 2023</div>
-        <a href="https://louicop.medium.com/learnings-exploring-the-gpt-llm-space-notes-from-an-exploratory-trip-in-the-us-8d1d7fe1c059" target="_blank">Learnings Exploring the GPT/LLM Space - Notes from an exploratory trip in the US</a>
-      </li>
-      <li>
-        <div class="blog-date">Apr 11, 2023</div>
-        <a href="https://louicop.medium.com/9-things-graneet-got-right-to-be-series-a-ready-some-quick-thoughts-on-the-journey-to-pmf-in-d3e36f6b3dba" target="_blank">9 Things Graneet Got Right To Be "Series A-Ready" - Some quick thoughts on the journey to PMF in vertical SaaS</a>
-      </li>
-      <li>
-        <div class="blog-date">Mar 31, 2023</div>
-        <a href="https://louicop.medium.com/designing-the-right-business-model-as-a-b2b-marketplace-some-thoughts-and-some-learnings-from-faire-8e1d791df54f" target="_blank">Designing the Right Business Model as a B2B Marketplace - Some thoughts and some learnings from Faire</a>
-      </li>
-      <li>
-        <div class="blog-date">Feb 8, 2023</div>
-        <a href="https://louicop.medium.com/democratising-agricultural-best-practices-and-bringing-farmers-products-online-our-investment-in-4c0b5d8e6de5" target="_blank">Democratising Agricultural Best Practices and Bringing Farmers' Products Online - Our investment in Wikifarmer</a>
-      </li>
+      <!-- Blog content will be loaded dynamically from CSV -->
     </ul>
   </section>
 
   <section id="music">
     <h2>Music</h2>
     <ul class="blog-list">
-      <li>
-        <div class="blog-date">Glenn Gould</div>
-        <a href="https://www.youtube.com/watch?v=Ah392lnFHxM" target="_blank">Bach: The Goldberg Variations, BWV 988 (1981 Recording)</a>
-      </li>
-      <li>
-        <div class="blog-date">Miles Davis</div>
-        <a href="https://www.youtube.com/watch?v=mSS5p9BdNGU" target="_blank">Sketches of Spain (1960)</a>
-      </li>
+      <!-- Music content will be loaded dynamically from CSV -->
     </ul>
   </section>
 
   <section id="art">
     <h2>Art</h2>
     <ul class="blog-list">
-      <li>
-        <div class="blog-date">Lee Ufan</div>
-        <a href="https://leeufanfoundation.org/" target="_blank">Lee Ufan Foundation - Official Website</a>
-        <img src="images/Lee Ufan.jpg" alt="Lee Ufan artwork" class="artwork-image">
-      </li>
+      <!-- Art content will be loaded dynamically from CSV -->
     </ul>
   </section>
 </main>
