@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Art - Louis Coppey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background-color: #fff;
+      --text-color: #111;
+      --border-color: #ddd;
+      --hover-color: #f5f5f5;
+      --header-border: #111;
+      --table-header-bg: #f8f8f8;
+      --date-color: #666;
+      --footer-color: #888;
+    }
+
+    [data-theme="dark"] {
+      --background-color: #111;
+      --text-color: #fff;
+      --border-color: #333;
+      --hover-color: #222;
+      --header-border: #333;
+      --table-header-bg: #222;
+      --date-color: #999;
+      --footer-color: #666;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--background-color);
+      font-family: 'Roboto Mono', monospace;
+      color: var(--text-color);
+      line-height: 1.6;
+      font-size: 18px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    header {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--background-color);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    header h1 a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 160px auto 80px;
+      padding: 0 20px;
+    }
+
+    section {
+      margin-bottom: 100px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .theme-toggle {
+      position: relative;
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 18px;
+      color: var(--text-color);
+      text-decoration: underline;
+      transition: color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      color: var(--date-color);
+    }
+
+    .theme-toggle .sun-icon {
+      display: block;
+    }
+
+    .theme-toggle .moon-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .sun-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .moon-icon {
+      display: block;
+    }
+
+    .blog-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .blog-list li {
+      margin-bottom: 30px;
+    }
+
+    .blog-date {
+      color: var(--date-color);
+      font-size: 18px;
+      margin-bottom: 5px;
+      transition: color 0.3s ease;
+    }
+
+    .blog-list a {
+      color: var(--text-color);
+      text-decoration: underline;
+      font-weight: 400;
+      transition: color 0.3s ease;
+    }
+
+    .blog-list a:hover {
+      text-decoration: underline;
+    }
+
+    .artwork-image {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      margin: 20px auto;
+      display: block;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+      
+      header h1 {
+        font-size: 36px;
+      }
+      
+      h2 {
+        font-size: 28px;
+      }
+      
+      header {
+        padding: 15px 20px;
+      }
+      
+      main {
+        margin: 140px auto 40px;
+      }
+      
+      section {
+        margin-bottom: 60px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      body {
+        font-size: 14px;
+      }
+      
+      header {
+        padding: 12px 15px;
+      }
+      
+      header h1 {
+        font-size: 32px;
+      }
+      
+      main {
+        margin: 100px auto 40px;
+        padding: 0 15px;
+      }
+    }
+  </style>
+  <script>
+    let artData = [];
+
+    async function loadArtData() {
+      try {
+        const response = await fetch('Art.csv');
+        const csvText = await response.text();
+        const rows = csvText.split('\n').filter(row => row.trim());
+        
+        artData = rows.slice(1).map(row => {
+          const [artist, title, url, image] = row.split(';').map(cell => cell.trim());
+          return { artist, title, url, image };
+        });
+
+        const artList = document.querySelector('#art .blog-list');
+        artList.innerHTML = '';
+        
+        artData.forEach(entry => {
+          const li = document.createElement('li');
+          const artistDiv = document.createElement('div');
+          artistDiv.className = 'blog-date';
+          artistDiv.textContent = entry.artist;
+          
+          const link = document.createElement('a');
+          link.href = entry.url;
+          link.target = '_blank';
+          link.textContent = entry.title;
+          
+          const img = document.createElement('img');
+          img.src = `images/${entry.image}`;
+          img.alt = `${entry.artist} artwork`;
+          img.className = 'artwork-image';
+          
+          li.appendChild(artistDiv);
+          li.appendChild(link);
+          li.appendChild(img);
+          artList.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Error loading art data:', error);
+      }
+    }
+
+    function initTheme() {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const savedTheme = localStorage.getItem('theme');
+      
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else if (prefersDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    initTheme();
+
+    window.addEventListener('load', () => {
+      loadArtData();
+    });
+  </script>
+</head>
+<body>
+
+<header>
+  <h1><a href="index.html">Louis Coppey</a></h1>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <span class="sun-icon">light/dark</span>
+    <span class="moon-icon">light/dark</span>
+  </button>
+</header>
+
+<main>
+  <section id="art">
+    <h2>Art</h2>
+    <ul class="blog-list">
+      <!-- Art content will be loaded dynamically from CSV -->
+    </ul>
+  </section>
+</main>
+
+</body>
+</html> 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Louis Coppey</title>
+  <title>Portfolio - Louis Coppey</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -84,80 +84,39 @@
       margin-bottom: 20px;
     }
 
-    p, li {
-      font-weight: 400;
-    }
-
-    ul {
-      list-style-type: disc;
-      padding-left: 20px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 50px 20px 20px;
-      font-size: 18px;
-      color: var(--footer-color);
-      transition: color 0.3s ease;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-      transition: border-color 0.3s ease;
-      font-size: 18px;
-    }
-
-    th {
-      font-weight: 700;
-      background-color: var(--table-header-bg);
-      transition: background-color 0.3s ease;
-    }
-
-    tr:hover {
-      background-color: var(--hover-color);
-      transition: background-color 0.3s ease;
-    }
-
-    .blog-list {
-      list-style: none;
+    .theme-toggle {
+      position: relative;
       padding: 0;
-    }
-
-    .blog-list li {
-      margin-bottom: 30px;
-    }
-
-    .blog-date {
-      color: var(--date-color);
-      font-size: 18px;
-      margin-bottom: 5px;
-      transition: color 0.3s ease;
-    }
-
-    .blog-list a {
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Roboto Mono', monospace;
+      font-size: var(--header-font-size);
       color: var(--text-color);
       text-decoration: underline;
-      font-weight: 400;
       transition: color 0.3s ease;
     }
 
-    .blog-list a:hover {
-      text-decoration: underline;
+    .theme-toggle:hover {
+      color: var(--date-color);
     }
 
-    .artwork-image {
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-      margin: 20px auto;
+    .theme-toggle .sun-icon {
+      display: block;
+    }
+
+    .theme-toggle .moon-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .sun-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .moon-icon {
       display: block;
     }
 
@@ -227,80 +186,6 @@
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
 
-    .theme-toggle {
-      position: relative;
-      padding: 0;
-      border: none;
-      background: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Roboto Mono', monospace;
-      font-size: var(--header-font-size);
-      color: var(--text-color);
-      text-decoration: underline;
-      transition: color 0.3s ease;
-    }
-
-    .theme-toggle:hover {
-      color: var(--date-color);
-    }
-
-    .theme-toggle::after {
-      content: "Switch to dark mode";
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 5px 10px;
-      background-color: var(--text-color);
-      color: var(--background-color);
-      border-radius: 4px;
-      font-size: 14px;
-      white-space: nowrap;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      pointer-events: none;
-    }
-
-    [data-theme="dark"] .theme-toggle::after {
-      content: "Switch to light mode";
-    }
-
-    .theme-toggle:hover::after {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* Mobile specific rules */
-    @media (hover: none) {
-      .theme-toggle::after {
-        display: none;
-      }
-      
-      .theme-toggle:active::after {
-        display: none;
-      }
-    }
-
-    .theme-toggle .sun-icon {
-      display: block;
-    }
-
-    .theme-toggle .moon-icon {
-      display: none;
-    }
-
-    [data-theme="dark"] .theme-toggle .sun-icon {
-      display: none;
-    }
-
-    [data-theme="dark"] .theme-toggle .moon-icon {
-      display: block;
-    }
-
     /* Theme colors */
     .theme-Creative-Software,
     .theme-ESG,
@@ -344,7 +229,6 @@
         margin-bottom: 60px;
       }
 
-      /* Responsive table styles */
       .portfolio-table {
         display: block;
         overflow-x: auto;
@@ -408,6 +292,137 @@
     }
   </style>
   <script>
+    let portfolioData = [];
+
+    function renderTable(data) {
+      const tableBody = document.getElementById('portfolio-table-body');
+      while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+      
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        
+        const tdName = document.createElement('td');
+        if (row.url) {
+          const a = document.createElement('a');
+          const url = row.url.trim();
+          a.href = url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+          a.target = '_blank';
+          a.textContent = row.company;
+          a.style.color = 'var(--text-color)';
+          a.style.textDecoration = 'none';
+          a.style.borderBottom = '1px dotted var(--text-color)';
+          tdName.appendChild(a);
+        } else {
+          tdName.textContent = row.company;
+        }
+        tr.appendChild(tdName);
+        
+        const tdDate = document.createElement('td');
+        tdDate.textContent = row.date;
+        tr.appendChild(tdDate);
+        
+        const tdStage = document.createElement('td');
+        tdStage.textContent = row.stage;
+        tr.appendChild(tdStage);
+        
+        const tdLocation = document.createElement('td');
+        tdLocation.textContent = row.location;
+        tr.appendChild(tdLocation);
+        
+        const tdTheme = document.createElement('td');
+        tdTheme.textContent = row.theme;
+        tdTheme.className = `theme-${row.theme.replace(/\s+/g, '-')}`;
+        tr.appendChild(tdTheme);
+        
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function filterByTheme(theme) {
+      const filteredData = theme === 'All' 
+        ? portfolioData 
+        : portfolioData.filter(item => item.theme === theme);
+      renderTable(filteredData);
+    }
+
+    function createThemeFilter(themes) {
+      const filterContainer = document.getElementById('theme-filter-container');
+      const select = document.createElement('select');
+      select.className = 'theme-filter';
+      select.addEventListener('change', (e) => filterByTheme(e.target.value));
+      
+      themes.forEach(theme => {
+        const option = document.createElement('option');
+        option.value = theme;
+        option.textContent = theme;
+        select.appendChild(option);
+      });
+      
+      while (filterContainer.firstChild) {
+        filterContainer.removeChild(filterContainer.firstChild);
+      }
+      
+      filterContainer.appendChild(select);
+    }
+
+    async function loadPortfolioData() {
+      try {
+        const response = await fetch('Portfolio.csv');
+        const csvText = await response.text();
+        
+        const cleanCsvText = csvText
+          .replace(/%$/, '')
+          .replace(/\n /g, ' ')
+          .trim();
+        
+        const rows = cleanCsvText.split('\n').filter(row => row.trim());
+        
+        portfolioData = rows.slice(1).map(row => {
+          const columns = row.match(/(?:\"[^\"]*\"|[^;]+)/g);
+          const [company, date, location, stage, theme, url] = columns.map(cell => 
+            cell.replace(/"/g, '').trim()
+          );
+          return { company, date, location, stage, theme, url };
+        });
+
+        portfolioData.sort((a, b) => {
+          const parseDate = (dateStr) => {
+            const [month, year] = dateStr.split('-');
+            return new Date(`${month} 20${year}`);
+          };
+          
+          try {
+            const dateA = parseDate(a.date);
+            const dateB = parseDate(b.date);
+            return dateB - dateA;
+          } catch (error) {
+            console.error('Error parsing dates:', error);
+            return 0;
+          }
+        });
+
+        const themes = ['All', ...new Set(portfolioData.map(item => item.theme).sort())];
+        
+        createThemeFilter(themes);
+        renderTable(portfolioData);
+
+        console.log('Data loaded successfully:', portfolioData);
+      } catch (error) {
+        console.error('Error loading portfolio data:', error);
+        const tableBody = document.getElementById('portfolio-table-body');
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.style.textAlign = 'center';
+        td.style.color = 'red';
+        td.textContent = 'Error loading data. Please check the console for details.';
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
+      }
+    }
+
     function initTheme() {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const savedTheme = localStorage.getItem('theme');
@@ -428,12 +443,16 @@
     }
 
     initTheme();
+
+    window.addEventListener('load', () => {
+      loadPortfolioData();
+    });
   </script>
 </head>
 <body>
 
 <header>
-  <h1>Louis Coppey</h1>
+  <h1><a href="index.html">Louis Coppey</a></h1>
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
     <span class="sun-icon">light/dark</span>
     <span class="moon-icon">light/dark</span>
@@ -441,16 +460,27 @@
 </header>
 
 <main>
-  <section id="about">
-    <p>Hi, I am Louis. I studied math and computer science and I have been a Venture investor at <a href="https://www.pointnine.com" target="_blank" style="color: var(--text-color); text-decoration: underline;">Point Nine</a> for about 10 years. Most of my work consists in studying, investing in and working with software companies.</p>
-    <p>My current areas of interest include AI and Data Infrastructure, Vertical Software, B2B marketplaces and software that play a role in a more ecological and inclusive future.</p>
-    <p>I believe my role is to channel capital in businesses that move the world in the right direction.</p>
-  </section>
-
-  <section id="links">
-    <p><a href="portfolio.html" style="color: var(--text-color); text-decoration: underline;">Portfolio</a> / <a href="blog.html" style="color: var(--text-color); text-decoration: underline;">Blog</a> / <a href="music.html" style="color: var(--text-color); text-decoration: underline;">Music</a> / <a href="art.html" style="color: var(--text-color); text-decoration: underline;">Art</a></p>
+  <section id="portfolio">
+    <h2>Portfolio</h2>
+    <div class="filter-container" id="theme-filter-container">
+      <!-- Theme filter will be inserted here -->
+    </div>
+    <table class="portfolio-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date of Investment</th>
+          <th>Current Stage</th>
+          <th>Location</th>
+          <th>Theme</th>
+        </tr>
+      </thead>
+      <tbody id="portfolio-table-body">
+        <!-- Table content will be loaded dynamically from CSV -->
+      </tbody>
+    </table>
   </section>
 </main>
 
 </body>
-</html>
+</html> 
