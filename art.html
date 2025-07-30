@@ -69,7 +69,7 @@
 
     main {
       max-width: 800px;
-      margin: 120px auto 60px;
+      margin: 100px auto 60px;
       padding: 0 20px;
     }
 
@@ -93,7 +93,7 @@
       align-items: center;
       justify-content: center;
       font-family: 'Roboto Mono', monospace;
-      font-size: 18px;
+      font-size: var(--header-font-size);
       color: var(--text-color);
       text-decoration: none;
       transition: color 0.3s ease;
@@ -165,6 +165,10 @@
         font-size: 16px;
       }
       
+      .theme-toggle {
+        font-size: 16px;
+      }
+      
       h2 {
         font-size: 16px;
       }
@@ -174,7 +178,7 @@
       }
       
       main {
-        margin: 140px auto 40px;
+        margin: 80px auto 40px;
         padding: 0 20px;
       }
       
@@ -196,8 +200,12 @@
         font-size: 14px;
       }
       
+      .theme-toggle {
+        font-size: 14px;
+      }
+      
       main {
-        margin: 100px auto 40px;
+        margin: 70px auto 40px;
         padding: 0 15px;
       }
     }
@@ -274,7 +282,7 @@
 <body>
 
 <header>
-  <h1><a href="index.html">louis coppey</a></h1>
+  <h1><a href="index.html">Louis Coppey</a></h1>
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
     <span class="sun-icon">light/dark</span>
     <span class="moon-icon">light/dark</span>
