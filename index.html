@@ -38,7 +38,10 @@
       color: var(--text-color);
       line-height: 1.6;
       font-size: var(--header-font-size);
+      text-align: justify;
       transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     header {
@@ -70,12 +73,12 @@
 
     main {
       max-width: 800px;
-      margin: 160px auto 80px;
+      margin: 120px auto 60px;
       padding: 0 20px;
     }
 
     section {
-      margin-bottom: 100px;
+      margin-bottom: 60px;
     }
 
     h2 {
@@ -238,6 +241,7 @@
       justify-content: center;
       font-family: 'Roboto Mono', monospace;
       font-size: var(--header-font-size);
+      font-weight: 400;
       color: var(--text-color);
       text-decoration: underline;
       transition: color 0.3s ease;
@@ -321,7 +325,7 @@
     /* Responsive Design */
     @media screen and (max-width: 768px) {
       body {
-        font-size: 16px;
+        font-size: var(--header-font-size);
       }
       
       header h1 {
@@ -329,7 +333,7 @@
       }
       
       h2 {
-        font-size: 28px;
+        font-size: 18px;
       }
       
       header {
@@ -337,11 +341,12 @@
       }
       
       main {
-        margin: 140px auto 40px;
+        margin: 120px auto 40px;
+        padding: 0 15px;
       }
       
       section {
-        margin-bottom: 60px;
+        margin-bottom: 40px;
       }
 
       /* Responsive table styles */
@@ -385,11 +390,11 @@
 
     @media screen and (max-width: 480px) {
       body {
-        font-size: 14px;
+        font-size: var(--header-font-size);
       }
       
       header {
-        padding: 12px 15px;
+        padding: 10px 15px;
       }
       
       header h1 {
@@ -397,13 +402,17 @@
       }
       
       main {
-        margin: 100px auto 40px;
-        padding: 0 15px;
+        margin: 100px auto 30px;
+        padding: 0 10px;
+      }
+      
+      section {
+        margin-bottom: 30px;
       }
       
       .portfolio-table th,
       .portfolio-table td {
-        padding: 8px;
+        padding: 6px;
       }
     }
   </style>
@@ -433,7 +442,7 @@
 <body>
 
 <header>
-  <h1>Louis Coppey</h1>
+  <h1><a href="index.html">louis coppey</a></h1>
   <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
     <span class="sun-icon">light/dark</span>
     <span class="moon-icon">light/dark</span>
@@ -449,6 +458,7 @@
 
   <section id="links">
     <p><a href="portfolio.html" style="color: var(--text-color); text-decoration: underline;">Portfolio</a> / <a href="blog.html" style="color: var(--text-color); text-decoration: underline;">Blog</a> / <a href="music.html" style="color: var(--text-color); text-decoration: underline;">Music</a> / <a href="art.html" style="color: var(--text-color); text-decoration: underline;">Art</a></p>
+    <p><a href="https://x.com/louicop" target="_blank" style="color: var(--text-color); text-decoration: underline;">X</a> / <a href="https://www.linkedin.com/in/louiscoppey/" target="_blank" style="color: var(--text-color); text-decoration: underline;">LinkedIn</a></p>
   </section>
 </main>
 
