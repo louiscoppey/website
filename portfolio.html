@@ -70,7 +70,7 @@
 
     main {
       max-width: 800px;
-      margin: 160px auto 80px;
+      margin: 120px auto 60px;
       padding: 0 20px;
     }
 
@@ -79,8 +79,8 @@
     }
 
     h2 {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: var(--header-font-size);
+      font-weight: 400;
       margin-bottom: 20px;
     }
 
@@ -96,8 +96,13 @@
       font-family: 'Roboto Mono', monospace;
       font-size: var(--header-font-size);
       color: var(--text-color);
-      text-decoration: underline;
+      text-decoration: none;
       transition: color 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      color: var(--date-color);
+      text-decoration: underline;
     }
 
     .theme-toggle:hover {
@@ -134,8 +139,8 @@
       font-size: 18px;
     }
 
-    .portfolio-table th {
-      font-weight: 700;
+    .portfolio-table     th {
+      font-weight: 400;
       background-color: var(--table-header-bg);
       transition: background-color 0.3s ease;
     }
@@ -210,11 +215,11 @@
       }
       
       header h1 {
-        font-size: var(--header-font-size);
+        font-size: 16px;
       }
       
       h2 {
-        font-size: 28px;
+        font-size: 16px;
       }
       
       header {
@@ -223,6 +228,7 @@
       
       main {
         margin: 140px auto 40px;
+        padding: 0 20px;
       }
       
       section {
@@ -277,7 +283,7 @@
       }
       
       header h1 {
-        font-size: var(--header-font-size);
+        font-size: 14px;
       }
       
       main {
@@ -469,7 +475,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Date of Investment</th>
+          <th>Date</th>
           <th>Current Stage</th>
           <th>Location</th>
           <th>Theme</th>
