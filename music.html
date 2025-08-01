@@ -238,27 +238,38 @@
         const musicList = document.querySelector('#music .blog-list');
         musicList.innerHTML = '<li style="color: var(--date-color); font-style: italic;">Loading tracks...</li>';
         
-        // Try to fetch from Spotify API first
-        const playlistId = '79l0xDb2SNJ6MOpxDJ9I6Q';
+        // Check if we're on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
         let playlistData = [];
         
-        try {
-          // Fetch playlist data from our server endpoint
-          const response = await fetch(`/api/spotify-playlist/${playlistId}`);
-          
-          if (response.ok) {
-            playlistData = await response.json();
-          } else {
-            throw new Error('Playlist not accessible');
-          }
-        } catch (apiError) {
-          // Fallback to known tracks if API is not available
-          console.log('Using fallback data');
+        if (isMobile) {
+          // On mobile: use static data (no API calls to avoid CORS issues)
+          console.log('Mobile detected, using static data');
           playlistData = [
             { artist: 'Franz Schubert, Maurizio Pollini', title: 'Piano Sonata No. 18 in G Major, D. 894: I. Molto moderato e cantabile', spotifyUrl: 'https://open.spotify.com/track/0hfnkmV7KryBL6prIBG2pv' },
             { artist: 'Esbjörn Svensson Trio', title: 'In My Garage', spotifyUrl: 'https://open.spotify.com/track/5XikEwYFSwGIfNd5XYgj8L' },
             { artist: 'Esbjörn Svensson Trio', title: 'Waltz for the Lonely Ones', spotifyUrl: 'https://open.spotify.com/track/4JEADljWBThk6rIUjdnG9S' }
           ];
+        } else {
+          // On desktop: try API first, fallback to static data
+          try {
+            const playlistId = '79l0xDb2SNJ6MOpxDJ9I6Q';
+            const response = await fetch(`/api/spotify-playlist/${playlistId}`);
+            
+            if (response.ok) {
+              playlistData = await response.json();
+            } else {
+              throw new Error('API not available');
+            }
+          } catch (apiError) {
+            console.log('API failed, using fallback data');
+            playlistData = [
+              { artist: 'Franz Schubert, Maurizio Pollini', title: 'Piano Sonata No. 18 in G Major, D. 894: I. Molto moderato e cantabile', spotifyUrl: 'https://open.spotify.com/track/0hfnkmV7KryBL6prIBG2pv' },
+              { artist: 'Esbjörn Svensson Trio', title: 'In My Garage', spotifyUrl: 'https://open.spotify.com/track/5XikEwYFSwGIfNd5XYgj8L' },
+              { artist: 'Esbjörn Svensson Trio', title: 'Waltz for the Lonely Ones', spotifyUrl: 'https://open.spotify.com/track/4JEADljWBThk6rIUjdnG9S' }
+            ];
+          }
         }
 
         // Clear loading message
