@@ -52,6 +52,7 @@
     "mitt": "^3.0.1",
     "ms": "^2.1.3",
     "netmask": "^2.0.2",
+    "node-fetch": "^3.3.2",
     "once": "^1.4.0",
     "pac-proxy-agent": "^7.2.0",
     "pac-resolver": "^7.0.1",
