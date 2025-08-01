@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Music - Louis Coppey</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -136,31 +137,42 @@
       display: block;
     }
 
-    .blog-list {
-      list-style: none;
-      padding: 0;
+    .spotify-container {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease;
     }
 
-    .blog-list li {
-      margin-bottom: 30px;
+    .spotify-container:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .blog-date {
+    .spotify-embed {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .playlist-description {
       color: var(--date-color);
-      font-size: 18px;
-      margin-bottom: 5px;
-      transition: color 0.3s ease;
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
     }
 
-    .blog-list a {
+    .playlist-link {
       color: var(--text-color);
       text-decoration: underline;
-      font-weight: 400;
       transition: color 0.3s ease;
     }
 
-    .blog-list a:hover {
-      text-decoration: underline;
+    .playlist-link:hover {
+      color: var(--date-color);
     }
 
     /* Responsive Design */
@@ -181,8 +193,8 @@
         font-size: 16px;
       }
       
-      .blog-date {
-        font-size: 16px;
+      .playlist-description {
+        font-size: 14px;
       }
       
       header {
@@ -196,6 +208,10 @@
       
       section {
         margin-bottom: 60px;
+      }
+
+      .spotify-embed {
+        height: 500px;
       }
     }
 
@@ -216,53 +232,21 @@
         font-size: 14px;
       }
       
-      .blog-date {
-        font-size: 14px;
+      .playlist-description {
+        font-size: 12px;
       }
       
       main {
         margin: 70px auto 40px;
         padding: 0 15px;
       }
+
+      .spotify-embed {
+        height: 400px;
+      }
     }
   </style>
   <script>
-    let musicData = [];
-
-    async function loadMusicData() {
-      try {
-        const response = await fetch('Music.csv');
-        const csvText = await response.text();
-        const rows = csvText.split('\n').filter(row => row.trim());
-        
-        musicData = rows.slice(1).map(row => {
-          const [artist, title, url] = row.split(';').map(cell => cell.trim());
-          return { artist, title, url };
-        });
-
-        const musicList = document.querySelector('#music .blog-list');
-        musicList.innerHTML = '';
-        
-        musicData.forEach(entry => {
-          const li = document.createElement('li');
-          const artistDiv = document.createElement('div');
-          artistDiv.className = 'blog-date';
-          artistDiv.textContent = entry.artist;
-          
-          const link = document.createElement('a');
-          link.href = entry.url;
-          link.target = '_blank';
-          link.textContent = entry.title;
-          
-          li.appendChild(artistDiv);
-          li.appendChild(link);
-          musicList.appendChild(li);
-        });
-      } catch (error) {
-        console.error('Error loading music data:', error);
-      }
-    }
-
     function initTheme() {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const savedTheme = localStorage.getItem('theme');
@@ -282,11 +266,15 @@
       localStorage.setItem('theme', newTheme);
     }
 
-    initTheme();
+    function refreshSpotifyEmbed() {
+      const iframe = document.getElementById('spotify-embed');
+      const currentSrc = iframe.src;
+      const timestamp = new Date().getTime();
+      const newSrc = currentSrc.split('?')[0] + '?utm_source=generator&theme=0&v=' + timestamp;
+      iframe.src = newSrc;
+    }
 
-    window.addEventListener('load', () => {
-      loadMusicData();
-    });
+    initTheme();
   </script>
 </head>
 <body>
@@ -302,9 +290,19 @@
 <main>
   <section id="music">
     <h2>Music</h2>
-    <ul class="blog-list">
-      <!-- Music content will be loaded dynamically from CSV -->
-    </ul>
+    <div class="playlist-description">
+      Once a month I find a track that I could keep listening to hundreds of times and publish it here.
+    </div>
+    <div class="spotify-container">
+      <iframe 
+        id="spotify-embed"
+        class="spotify-embed"
+        src="https://open.spotify.com/embed/playlist/79l0xDb2SNJ6MOpxDJ9I6Q?utm_source=generator&theme=0" 
+        allowfullscreen="" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+        loading="lazy">
+      </iframe>
+    </div>
   </section>
 </main>
 
