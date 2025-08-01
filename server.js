@@ -16,8 +16,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 // Servir les fichiers statiques
 app.use(express.static(__dirname));
 
