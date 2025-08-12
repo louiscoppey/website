@@ -5,8 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Art - Louis Coppey</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
   <style>
+    @font-face {
+      font-family: 'Unica77';
+      src: url('fonts/Unica77 LL.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
       --background-color: #fff;
       --text-color: #2C1810;
@@ -39,10 +47,12 @@
       margin: 0;
       padding: 0;
       background-color: var(--background-color);
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Unica77', sans-serif;
       color: var(--text-color);
       line-height: 1.6;
       font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
       transition: background-color 0.3s ease, color 0.3s ease;
       min-height: 100vh;
       overflow-x: hidden;
@@ -107,7 +117,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Unica77', sans-serif;
       font-size: var(--header-font-size);
       color: var(--text-color);
       text-decoration: none;
