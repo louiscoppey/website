@@ -94,7 +94,7 @@
     }
 
     h2 {
-      font-size: var(--header-font-size);
+      font-size: 18px;
       font-weight: 400;
       margin-bottom: 20px;
     }
@@ -109,7 +109,7 @@
       align-items: center;
       justify-content: center;
       font-family: 'Roboto Mono', monospace;
-      font-size: var(--header-font-size);
+      font-size: 18px;
       color: var(--text-color);
       text-decoration: none;
       transition: color 0.3s ease;
@@ -136,39 +136,42 @@
       display: block;
     }
 
-    .blog-list {
+    .art-list {
       list-style: none;
       padding: 0;
     }
 
-    .blog-list li {
+    .art-list li {
       margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
     }
 
-    .blog-date {
+    .art-list li:hover {
+      background-color: var(--hover-color);
+      border-color: var(--text-color);
+    }
+
+    .artist-name {
       color: var(--date-color);
       font-size: 18px;
-      margin-bottom: 5px;
+      margin-bottom: 10px;
+      font-weight: 500;
       transition: color 0.3s ease;
     }
 
-    .blog-list a {
+    .art-link {
       color: var(--text-color);
       text-decoration: underline;
       font-weight: 400;
       transition: color 0.3s ease;
+      font-size: 16px;
     }
 
-    .blog-list a:hover {
-      text-decoration: underline;
-    }
-
-    .artwork-image {
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-      margin: 20px auto;
-      display: block;
+    .art-link:hover {
+      color: var(--date-color);
     }
 
     /* Responsive Design */
@@ -189,7 +192,7 @@
         font-size: 16px;
       }
       
-      .blog-date {
+      .artist-name {
         font-size: 16px;
       }
       
@@ -224,7 +227,7 @@
         font-size: 14px;
       }
       
-      .blog-date {
+      .artist-name {
         font-size: 14px;
       }
       
@@ -244,32 +247,28 @@
         const rows = csvText.split('\n').filter(row => row.trim());
         
         artData = rows.slice(1).map(row => {
-          const [artist, title, url, image] = row.split(';').map(cell => cell.trim());
-          return { artist, title, url, image };
+          const [artist, title, url] = row.split(';').map(cell => cell.trim());
+          return { artist, title, url };
         });
 
-        const artList = document.querySelector('#art .blog-list');
+        const artList = document.querySelector('#art .art-list');
         artList.innerHTML = '';
         
         artData.forEach(entry => {
           const li = document.createElement('li');
+          
           const artistDiv = document.createElement('div');
-          artistDiv.className = 'blog-date';
+          artistDiv.className = 'artist-name';
           artistDiv.textContent = entry.artist;
           
           const link = document.createElement('a');
           link.href = entry.url;
           link.target = '_blank';
+          link.className = 'art-link';
           link.textContent = entry.title;
-          
-          const img = document.createElement('img');
-          img.src = `images/${entry.image}`;
-          img.alt = `${entry.artist} artwork`;
-          img.className = 'artwork-image';
           
           li.appendChild(artistDiv);
           li.appendChild(link);
-          li.appendChild(img);
           artList.appendChild(li);
         });
       } catch (error) {
@@ -316,7 +315,7 @@
 <main>
   <section id="art">
     <h2>Art</h2>
-    <ul class="blog-list">
+    <ul class="art-list">
       <!-- Art content will be loaded dynamically from CSV -->
     </ul>
   </section>
