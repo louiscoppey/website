@@ -163,6 +163,13 @@
       text-decoration: underline;
     }
 
+    .art-description {
+      color: var(--date-color);
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
     /* Responsive Design */
     @media screen and (max-width: 768px) {
       body {
@@ -183,6 +190,10 @@
       
       .artist-name {
         font-size: 16px;
+      }
+      
+      .art-description {
+        font-size: 14px;
       }
       
       header {
@@ -218,6 +229,10 @@
       
       .artist-name {
         font-size: 14px;
+      }
+      
+      .art-description {
+        font-size: 12px;
       }
       
       main {
@@ -303,6 +318,9 @@
 <main>
   <section id="art">
     <h2>Art</h2>
+    <div class="art-description">
+      A list of artists I've discovered and loved.
+    </div>
     <ul class="art-list">
       <!-- Art content will be loaded dynamically from CSV -->
       <li>
