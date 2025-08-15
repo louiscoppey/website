@@ -143,35 +143,24 @@
 
     .art-list li {
       margin-bottom: 30px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      transition: border-color 0.3s ease, background-color 0.3s ease;
-    }
-
-    .art-list li:hover {
-      background-color: var(--hover-color);
-      border-color: var(--text-color);
     }
 
     .artist-name {
       color: var(--date-color);
       font-size: 18px;
-      margin-bottom: 10px;
-      font-weight: 500;
+      margin-bottom: 5px;
       transition: color 0.3s ease;
     }
 
-    .art-link {
+    .art-list a {
       color: var(--text-color);
       text-decoration: underline;
       font-weight: 400;
       transition: color 0.3s ease;
-      font-size: 16px;
     }
 
-    .art-link:hover {
-      color: var(--date-color);
+    .art-list a:hover {
+      text-decoration: underline;
     }
 
     /* Responsive Design */
@@ -264,7 +253,6 @@
           const link = document.createElement('a');
           link.href = entry.url;
           link.target = '_blank';
-          link.className = 'art-link';
           link.textContent = entry.title;
           
           li.appendChild(artistDiv);
@@ -317,6 +305,10 @@
     <h2>Art</h2>
     <ul class="art-list">
       <!-- Art content will be loaded dynamically from CSV -->
+      <li>
+        <div class="artist-name">Loading...</div>
+        <a href="#" style="color: var(--text-color); text-decoration: underline;">Loading artists...</a>
+      </li>
     </ul>
   </section>
 </main>
