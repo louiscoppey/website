@@ -302,12 +302,22 @@
       try {
         const response = await fetch('Stream.csv');
         const csvText = await response.text();
-        const rows = csvText.split('\n').filter(row => row.trim());
+        console.log('CSV Text:', csvText);
         
-        streamData = rows.slice(1).map(row => {
-          const [date, title, content] = row.split(';').map(cell => cell.trim());
+        const rows = csvText.split('\n').filter(row => row.trim());
+        console.log('Rows:', rows);
+        
+        streamData = rows.slice(1).filter(row => row.trim()).map(row => {
+          const parts = row.split(';');
+          if (parts.length !== 3) {
+            console.warn('Invalid row format:', row);
+            return null;
+          }
+          const [date, title, content] = parts.map(cell => cell.trim());
           return { date, title, content };
-        });
+        }).filter(entry => entry !== null);
+
+        console.log('Parsed data:', streamData);
 
         streamData.sort((a, b) => {
           return new Date(b.date) - new Date(a.date);
@@ -385,7 +395,7 @@
   <section id="stream">
     <h2>Feed</h2>
     <div class="playlist-description">
-      Tidbits I'd rather post here than on Twitter
+      Tidbits I'd rather post here than on X
     </div>
     <div class="stream-entries">
       <!-- Les entrées seront chargées dynamiquement -->
