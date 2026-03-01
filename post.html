@@ -259,6 +259,7 @@
         type: 'object',
         properties: {
           original_date: { type: 'string', description: 'Exact date string of the entry to edit (e.g. "2026/3/1 14:30").' },
+          new_date:      { type: 'string', description: 'Optional new date string if the user wants to change the date. Use same format: "YYYY/M/D HH:MM". Omit or use empty string to keep original.' },
           title:         { type: 'string', description: 'New title. Empty string if none.' },
           content:       { type: 'string', description: 'New content. Plain text, no markdown.' }
         },
@@ -300,7 +301,7 @@ When posting:
 
 When editing:
 1. Show him the current text and ask what to change.
-2. Apply the edit and call edit_feed_entry with the exact original_date.
+2. Apply the edit and call edit_feed_entry with the exact original_date. If he wants to change the date too, pass the new date as new_date (format: "YYYY/M/D HH:MM").
 
 Rules: plain text only, no markdown, no asterisks. Short and direct. After any action, send a short confirmation.
 
@@ -471,7 +472,7 @@ ${list}`;
       if (toolName === 'post_to_feed') {
         await commitToGitHub(input.title || '', input.content || '');
       } else if (toolName === 'edit_feed_entry') {
-        await editInGitHub(input.original_date, input.title || '', input.content || '');
+        await editInGitHub(input.original_date, input.title || '', input.content || '', input.new_date || '');
       }
       sysMsg.textContent = doneLabel;
       toolResult = `${doneLabel} successfully.`;
@@ -533,14 +534,15 @@ ${list}`;
     await putCSV(newText, sha, `feed: ${(safeTitle || safeContent).slice(0, 72)}`);
   }
 
-  async function editInGitHub(originalDate, title, content) {
+  async function editInGitHub(originalDate, title, content, newDate) {
     const safeTitle   = (title   || '').replace(/[;\n\r]/g, ' ').trim();
     const safeContent = (content || '').replace(/[;\n\r]/g, ' ').trim();
+    const safeDate    = (newDate || '').replace(/[;\n\r]/g, ' ').trim() || originalDate;
     const { text, sha } = await fetchCSV();
     const rows = parseCSV(text);
     const idx  = rows.findIndex(r => r.date === originalDate);
     if (idx === -1) throw new Error(`Post not found (date: ${originalDate})`);
-    rows[idx] = { date: originalDate, title: safeTitle, content: safeContent };
+    rows[idx] = { date: safeDate, title: safeTitle, content: safeContent };
     await putCSV(buildCSVText(rows), sha, `feed edit: ${(safeTitle || safeContent).slice(0, 60)}`);
   }
 
@@ -613,7 +615,7 @@ ${list}`;
     messages = [];
     document.getElementById('messages').innerHTML = '';
 
-    const ctx = `I want to edit this post (date: ${post.date}):\n${post.title ? `Title: ${post.title}\n` : ''}Content: ${post.content}`;
+    const ctx = `I want to edit this post:\nDate: ${post.date}\n${post.title ? `Title: ${post.title}\n` : ''}Content: ${post.content}\n\nYou can change the date, title, and/or content.`;
     addMsg('user', ctx);
     messages.push({ role: 'user', content: ctx });
 
