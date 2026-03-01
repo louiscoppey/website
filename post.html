@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Post — Feed</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fff;
+      --text: #2C1810;
+      --border: #E8E0D8;
+      --hover: #F5F2EF;
+      --muted: #8B7355;
+      --table-header-bg: #F8F6F4;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1A0F08;
+      --text: #E8E0D8;
+      --border: #4A3C2A;
+      --hover: #2A1F15;
+      --muted: #C4B8A8;
+      --table-header-bg: #2A1F15;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ── Setup screen ── */
+    #setup {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    #setup h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    #setup .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 7px;
+      letter-spacing: 0.03em;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      background: var(--hover);
+      border: 1px solid var(--border);
+      color: var(--text);
+      outline: none;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--muted);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:active { opacity: 0.8; }
+
+    .setup-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 18px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ── Chat screen ── */
+    #chat {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      height: 100dvh;
+    }
+
+    .chat-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+
+    .chat-header-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 16px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 2px 0;
+      transition: color 0.2s;
+    }
+
+    .icon-btn:hover { color: var(--text); }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .msg {
+      max-width: 88%;
+      line-height: 1.65;
+      font-size: 15px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: var(--hover);
+      border: 1px solid var(--border);
+      padding: 10px 15px;
+      border-radius: 18px 18px 4px 18px;
+    }
+
+    .msg.assistant {
+      align-self: flex-start;
+      color: var(--text);
+    }
+
+    .msg.system {
+      align-self: center;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--table-header-bg);
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      border-radius: 20px;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    /* Typing dots */
+    .typing {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      padding: 6px 0;
+      align-self: flex-start;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.3s infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+      30% { transform: translateY(-7px); opacity: 1; }
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      padding: 10px 14px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+
+    #msg-input {
+      flex: 1;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 15px;
+      background: var(--hover);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 20px;
+      padding: 10px 16px;
+      resize: none;
+      outline: none;
+      min-height: 42px;
+      max-height: 130px;
+      overflow-y: auto;
+      line-height: 1.5;
+      transition: border-color 0.2s;
+    }
+
+    #msg-input:focus { border-color: var(--muted); }
+
+    #msg-input::placeholder { color: var(--muted); }
+
+    #send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+      line-height: 1;
+    }
+
+    #send-btn:disabled { opacity: 0.3; cursor: default; }
+    #send-btn:active:not(:disabled) { opacity: 0.7; }
+  </style>
+</head>
+<body>
+
+<!-- ── Setup Screen ── -->
+<div id="setup">
+  <h1>Feed assistant</h1>
+  <p class="subtitle">One-time setup. Keys are saved locally on this device only.</p>
+
+  <div class="field">
+    <label>ANTHROPIC API KEY</label>
+    <input type="password" id="setup-anthropic" placeholder="sk-ant-api03-..." autocomplete="off" />
+  </div>
+
+  <div class="field">
+    <label>GITHUB PERSONAL ACCESS TOKEN</label>
+    <input type="password" id="setup-github" placeholder="ghp_..." autocomplete="off" />
+  </div>
+
+  <button class="btn-primary" onclick="saveSetup()">Save & Start</button>
+
+  <p class="setup-note">
+    Keys never leave your device.<br>
+    GitHub token needs <strong>repo</strong> write access.
+  </p>
+</div>
+
+<!-- ── Chat Screen ── -->
+<div id="chat">
+  <div class="chat-header">
+    <span class="chat-header-title">Feed</span>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="newChat()">new</button>
+      <button class="icon-btn" onclick="showSettings()">settings</button>
+    </div>
+  </div>
+
+  <div id="messages"></div>
+
+  <div class="input-area">
+    <textarea
+      id="msg-input"
+      placeholder="What's on your mind?"
+      rows="1"
+      onkeydown="handleKey(event)"
+      oninput="onInputChange()"
+    ></textarea>
+    <button id="send-btn" onclick="send()" disabled>↑</button>
+  </div>
+</div>
+
+<script>
+  // ── Config ──────────────────────────────────────────────
+  const REPO   = 'louiscoppey/website';
+  const BRANCH = 'main';
+  const MODEL  = 'claude-sonnet-4-6';
+
+  const SYSTEM = `You are Louis's personal feed assistant. Louis runs a personal site at louicop.xyz and has a Feed page where he shares short thoughts, observations, and ideas — things he'd rather post on his own site than on X.
+
+Your job: help him turn a quick idea into a feed entry, then post it.
+
+When he shares something:
+1. Read it, briefly confirm or offer a light tweak if needed — keep his voice, don't over-process.
+2. Suggest a short title only when it genuinely adds context. Many entries work without one.
+3. The moment he says anything like "post it", "yes", "go ahead", "looks good", "do it" — call post_to_feed immediately. Don't ask for more confirmation.
+
+Rules:
+- Plain text only. No markdown, no asterisks, no bullet symbols.
+- Short and direct. No filler.
+- After posting, send a short friendly confirmation. That's it.`;
+
+  const TOOLS = [{
+    name: 'post_to_feed',
+    description: "Appends an entry to Louis's Stream.csv on GitHub. Call this as soon as he confirms.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          description: 'Short title. Use empty string if none is needed.'
+        },
+        content: {
+          type: 'string',
+          description: 'The feed entry text. Plain text, no markdown, no line breaks.'
+        }
+      },
+      required: ['title', 'content']
+    }
+  }];
+
+  // ── State ───────────────────────────────────────────────
+  let messages = [];
+  let busy     = false;
+
+  // ── Theme ───────────────────────────────────────────────
+  (function () {
+    const saved = localStorage.getItem('theme');
+    const dark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+
+  // ── Init ────────────────────────────────────────────────
+  function init() {
+    if (localStorage.getItem('anthropic_key') && localStorage.getItem('github_token')) {
+      openChat();
+    }
+  }
+
+  function saveSetup() {
+    const ak = document.getElementById('setup-anthropic').value.trim();
+    const gh = document.getElementById('setup-github').value.trim();
+    if (!ak || !gh) { alert('Both keys are required.'); return; }
+    localStorage.setItem('anthropic_key', ak);
+    localStorage.setItem('github_token', gh);
+    openChat();
+  }
+
+  function openChat() {
+    document.getElementById('setup').style.display = 'none';
+    const chat = document.getElementById('chat');
+    chat.style.display = 'flex';
+    chat.style.flexDirection = 'column';
+    if (messages.length === 0) greet();
+    document.getElementById('msg-input').focus();
+  }
+
+  function showSettings() {
+    document.getElementById('chat').style.display = 'none';
+    const s = document.getElementById('setup');
+    s.style.display = 'flex';
+    document.getElementById('setup-anthropic').value = localStorage.getItem('anthropic_key') || '';
+    document.getElementById('setup-github').value    = localStorage.getItem('github_token')  || '';
+  }
+
+  function newChat() {
+    messages = [];
+    document.getElementById('messages').innerHTML = '';
+    greet();
+  }
+
+  function greet() {
+    addMsg('assistant', "What's on your mind?");
+  }
+
+  // ── UI helpers ───────────────────────────────────────────
+  function addMsg(role, text) {
+    const el = document.createElement('div');
+    el.className = `msg ${role}`;
+    el.textContent = text;
+    document.getElementById('messages').appendChild(el);
+    scrollBottom();
+    return el;
+  }
+
+  function showTyping() {
+    const el = document.createElement('div');
+    el.className = 'typing';
+    el.id = 'typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    document.getElementById('messages').appendChild(el);
+    scrollBottom();
+  }
+
+  function removeTyping() {
+    const el = document.getElementById('typing');
+    if (el) el.remove();
+  }
+
+  function scrollBottom() {
+    const m = document.getElementById('messages');
+    m.scrollTop = m.scrollHeight;
+  }
+
+  function onInputChange() {
+    const val = document.getElementById('msg-input').value.trim();
+    document.getElementById('send-btn').disabled = !val || busy;
+    autoResize(document.getElementById('msg-input'));
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
+  // ── Send ─────────────────────────────────────────────────
+  async function send() {
+    const input = document.getElementById('msg-input');
+    const text  = input.value.trim();
+    if (!text || busy) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-btn').disabled = true;
+
+    addMsg('user', text);
+    messages.push({ role: 'user', content: text });
+
+    busy = true;
+    showTyping();
+
+    try {
+      await callClaude();
+    } catch (err) {
+      removeTyping();
+      addMsg('assistant', 'Something went wrong. Check your API key and try again.');
+      console.error(err);
+    }
+
+    busy = false;
+    onInputChange();
+  }
+
+  // ── Claude API (streaming) ────────────────────────────────
+  async function callClaude() {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': localStorage.getItem('anthropic_key'),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1024,
+        system: SYSTEM,
+        tools: TOOLS,
+        messages,
+        stream: true
+      })
+    });
+
+    if (!res.ok) {
+      const e = await res.json();
+      throw new Error(e.error?.message || `API error ${res.status}`);
+    }
+
+    // Stream parsing
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer   = '';
+    let fullText = '';
+    let tool     = null;   // { id, name }
+    let toolJson = '';
+    let msgEl    = null;
+
+    removeTyping();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data) continue;
+
+        let ev;
+        try { ev = JSON.parse(data); } catch { continue; }
+
+        if (ev.type === 'content_block_start') {
+          if (ev.content_block.type === 'text' && !msgEl) {
+            msgEl = addMsg('assistant', '');
+          }
+          if (ev.content_block.type === 'tool_use') {
+            tool     = { id: ev.content_block.id, name: ev.content_block.name };
+            toolJson = '';
+          }
+        }
+
+        if (ev.type === 'content_block_delta') {
+          if (ev.delta.type === 'text_delta') {
+            fullText += ev.delta.text;
+            if (msgEl) msgEl.textContent = fullText;
+            scrollBottom();
+          }
+          if (ev.delta.type === 'input_json_delta') {
+            toolJson += ev.delta.partial_json;
+          }
+        }
+      }
+    }
+
+    // Build assistant history entry
+    const assistantContent = [];
+    if (fullText) assistantContent.push({ type: 'text', text: fullText });
+    if (tool) {
+      assistantContent.push({
+        type: 'tool_use',
+        id: tool.id,
+        name: tool.name,
+        input: JSON.parse(toolJson || '{}')
+      });
+    }
+    if (assistantContent.length) {
+      messages.push({ role: 'assistant', content: assistantContent });
+    }
+
+    // Execute tool
+    if (tool && tool.name === 'post_to_feed') {
+      await runPostTool(tool.id, JSON.parse(toolJson || '{}'));
+    }
+  }
+
+  // ── Tool execution ────────────────────────────────────────
+  async function runPostTool(toolId, input) {
+    const sysMsg = addMsg('system', 'Posting to feed…');
+
+    let toolResult;
+    try {
+      await commitToGitHub(input.title || '', input.content || '');
+      sysMsg.textContent = 'Posted ✓';
+      toolResult = 'Posted successfully.';
+    } catch (err) {
+      sysMsg.textContent = `Error: ${err.message}`;
+      toolResult = `Error: ${err.message}`;
+      console.error(err);
+    }
+
+    // Return result to Claude for confirmation message
+    messages.push({
+      role: 'user',
+      content: [{ type: 'tool_result', tool_use_id: toolId, content: toolResult }]
+    });
+
+    showTyping();
+    await callClaude();
+  }
+
+  // ── GitHub API ────────────────────────────────────────────
+  async function commitToGitHub(title, content) {
+    const token = localStorage.getItem('github_token');
+
+    // Format date: 2025/3/1 14:30
+    const now = new Date();
+    const date = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ` +
+      `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    // Sanitize — semicolons and newlines would break CSV parsing
+    const safeTitle   = (title   || '').replace(/[;\n\r]/g, ' ').trim();
+    const safeContent = (content || '').replace(/[;\n\r]/g, ' ').trim();
+
+    const newRow = `${date};${safeTitle};${safeContent}`;
+
+    // Fetch current file
+    const getRes = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/Stream.csv?ref=${BRANCH}`,
+      { headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' } }
+    );
+    if (!getRes.ok) throw new Error('Could not read Stream.csv — check your GitHub token.');
+
+    const fileData      = await getRes.json();
+    const currentText   = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+    const updatedText   = currentText.trimEnd() + '\n' + newRow;
+    const encodedB64    = btoa(unescape(encodeURIComponent(updatedText)));
+
+    // Commit
+    const putRes = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/Stream.csv`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `token ${token}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({
+          message: `feed: ${(safeTitle || safeContent).slice(0, 72)}`,
+          content: encodedB64,
+          sha: fileData.sha,
+          branch: BRANCH
+        })
+      }
+    );
+
+    if (!putRes.ok) {
+      const e = await putRes.json();
+      throw new Error(e.message || 'GitHub commit failed.');
+    }
+  }
+
+  // ── Start ─────────────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>
