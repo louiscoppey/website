@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Photos - Louis Coppey</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -35,7 +35,7 @@
       max-width: 100vw;
       box-sizing: border-box;
     }
-    
+
     body {
       margin: 0;
       padding: 0;
@@ -85,18 +85,14 @@
 
     main {
       max-width: 800px;
-      margin: 100px auto 60px;
+      margin: 100px auto 80px;
       padding: 0 20px;
-    }
-
-    section {
-      margin-bottom: 100px;
     }
 
     h2 {
       font-size: 18px;
       font-weight: 400;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
     }
 
     .theme-toggle {
@@ -136,258 +132,214 @@
       display: block;
     }
 
-    .photos-description {
-      color: var(--date-color);
-      font-size: 16px;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-
-
-    .carousel-container {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      overflow: hidden;
-      border-radius: 8px;
-    }
-
-    .carousel-slide {
-      display: none;
-      text-align: center;
-    }
-
-    .carousel-slide.active {
-      display: block;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .carousel-image {
-      width: 100%;
-      height: 400px;
-      object-fit: contain;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: opacity 0.3s ease;
-      background-color: var(--background-color);
-    }
-
-    .carousel-image:hover {
-      opacity: 0.9;
-    }
-
-    .carousel-subtitle {
-      color: var(--date-color);
-      font-size: 14px;
-      margin-top: 15px;
-      font-style: italic;
-    }
-
-    .carousel-dots {
+    /* Gallery */
+    .photo-gallery {
       display: flex;
+      flex-direction: column;
+      gap: 60px;
+      max-width: 600px;
+    }
+
+    .photo-item {
+      display: block;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: zoom-in;
+      transition: opacity 0.2s ease;
+    }
+
+    .photo-item img:hover {
+      opacity: 0.92;
+    }
+
+    .photo-caption {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--date-color);
+      font-family: 'Roboto Mono', monospace;
+      line-height: 1.4;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 9999;
+      align-items: center;
       justify-content: center;
-      margin-top: 20px;
-      gap: 10px;
+      cursor: zoom-out;
     }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: var(--border-color);
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      cursor: default;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
     }
 
-    .dot.active {
-      background-color: var(--date-color);
+    .lightbox-close:hover {
+      color: #fff;
     }
 
-    .dot:hover {
-      background-color: var(--text-color);
+    .lightbox-caption {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
     }
 
-    /* Responsive Design */
+    /* Lightbox nav */
+    .lightbox-prev,
+    .lightbox-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      padding: 12px;
+      line-height: 1;
+    }
+
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+
+    .lightbox-prev:hover,
+    .lightbox-next:hover {
+      color: #fff;
+    }
+
+    /* Footer */
+    .footer-text {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 13px;
+      color: var(--footer-color);
+    }
+
+    /* Responsive */
     @media screen and (max-width: 768px) {
-      body {
-        font-size: 16px;
-      }
-      
-      header h1 {
-        font-size: 16px;
-      }
-      
-      .theme-toggle {
-        font-size: 16px;
-      }
-      
-      h2 {
-        font-size: 16px;
-      }
-      
-      .photos-description {
-        font-size: 14px;
-      }
-      
-      .carousel-image {
-        height: 300px;
-      }
-      
-      header {
-        padding: 15px 20px;
-      }
-      
-      main {
-        margin: 80px auto 40px;
-        padding: 0 20px;
-      }
-      
-      section {
-        margin-bottom: 60px;
-      }
+      body { font-size: 16px; }
+      header h1 { font-size: 16px; }
+      .theme-toggle { font-size: 16px; }
+      h2 { font-size: 16px; }
+      header { padding: 15px 20px; }
+      main { margin: 80px auto 40px; }
+      .photo-gallery { gap: 48px; }
     }
 
     @media screen and (max-width: 480px) {
-      body {
-        font-size: 14px;
-      }
-      
-      header {
-        padding: 12px 15px;
-      }
-      
-      header h1 {
-        font-size: 14px;
-      }
-      
-      .theme-toggle {
-        font-size: 14px;
-      }
-      
-      .photos-description {
-        font-size: 12px;
-      }
-      
-      .carousel-image {
-        height: 250px;
-      }
-      
-      main {
-        margin: 70px auto 40px;
-        padding: 0 15px;
-      }
+      body { font-size: 14px; }
+      header { padding: 12px 15px; }
+      header h1 { font-size: 14px; }
+      .theme-toggle { font-size: 14px; }
+      main { margin: 70px auto 40px; padding: 0 15px; }
+      .photo-gallery { gap: 40px; }
     }
   </style>
   <script>
     let photosData = [];
-    let currentSlide = 0;
-    let slideInterval;
-    
+    let lightboxIndex = 0;
 
     async function loadPhotosData() {
       try {
         const response = await fetch('Photos.csv');
         const csvText = await response.text();
         const rows = csvText.split('\n').filter(row => row.trim());
-        
         photosData = rows.slice(1).map(row => {
-          const [name, subtitle] = row.split(',').map(cell => cell.trim());
-          return { name, subtitle };
+          const [name, ...rest] = row.split(',');
+          return { name: name.trim(), subtitle: rest.join(',').trim() };
         });
-
-        createCarousel();
-        startSlideshow();
+        createGallery();
       } catch (error) {
         console.error('Error loading photos data:', error);
-        // Fallback data if CSV fails to load
-        photosData = [
-          { name: 'Self_US.jpg', subtitle: 'Picture in the lift, West Village' }
-        ];
-        createCarousel();
-        startSlideshow();
+        photosData = [{ name: 'Self_US.jpg', subtitle: 'Picture in the lift, West Village | Nov \'24' }];
+        createGallery();
       }
     }
 
-    function createCarousel() {
-      const carouselContainer = document.querySelector('.carousel-container');
-      const dotsContainer = document.querySelector('.carousel-dots');
-      
-      // Clear existing content
-      carouselContainer.innerHTML = '';
-      dotsContainer.innerHTML = '';
+    function createGallery() {
+      const gallery = document.querySelector('.photo-gallery');
+      gallery.innerHTML = '';
 
       photosData.forEach((photo, index) => {
-        // Create slide
-        const slide = document.createElement('div');
-        slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-        
+        const item = document.createElement('div');
+        item.className = 'photo-item';
+
         const img = document.createElement('img');
         img.src = `photos/${photo.name}`;
         img.alt = photo.subtitle;
-        img.className = 'carousel-image';
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', stopSlideshow);
-        
-        const subtitle = document.createElement('div');
-        subtitle.className = 'carousel-subtitle';
-        subtitle.textContent = photo.subtitle;
-        
-        slide.appendChild(img);
-        slide.appendChild(subtitle);
-        carouselContainer.appendChild(slide);
+        img.loading = 'lazy';
+        img.onclick = () => openLightbox(index);
 
-        // Create dot
-        const dot = document.createElement('span');
-        dot.className = `dot ${index === 0 ? 'active' : ''}`;
-        dot.onclick = () => goToSlide(index);
-        dotsContainer.appendChild(dot);
+        const caption = document.createElement('div');
+        caption.className = 'photo-caption';
+        caption.textContent = photo.subtitle;
+
+        item.appendChild(img);
+        item.appendChild(caption);
+        gallery.appendChild(item);
       });
     }
 
-    function goToSlide(slideIndex) {
-      const slides = document.querySelectorAll('.carousel-slide');
-      const dots = document.querySelectorAll('.dot');
-      
-      // Remove active class from current slide and dot
-      slides[currentSlide].classList.remove('active');
-      dots[currentSlide].classList.remove('active');
-      
-      // Set new current slide
-      currentSlide = slideIndex;
-      
-      // Add active class to new slide and dot
-      slides[currentSlide].classList.add('active');
-      dots[currentSlide].classList.add('active');
-      
-      // Restart slideshow
-      startSlideshow();
+    function openLightbox(index) {
+      lightboxIndex = index;
+      renderLightbox();
+      document.querySelector('.lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
 
-    function nextSlide() {
-      const nextIndex = (currentSlide + 1) % photosData.length;
-      goToSlide(nextIndex);
+    function closeLightbox() {
+      document.querySelector('.lightbox').classList.remove('open');
+      document.body.style.overflow = '';
     }
 
-    function startSlideshow() {
-      clearInterval(slideInterval);
-      slideInterval = setInterval(nextSlide, 4000);
+    function renderLightbox() {
+      const photo = photosData[lightboxIndex];
+      document.querySelector('.lightbox img').src = `photos/${photo.name}`;
+      document.querySelector('.lightbox img').alt = photo.subtitle;
+      document.querySelector('.lightbox-caption').textContent = photo.subtitle;
     }
 
-    function stopSlideshow() {
-      clearInterval(slideInterval);
+    function lightboxNav(dir) {
+      lightboxIndex = (lightboxIndex + dir + photosData.length) % photosData.length;
+      renderLightbox();
     }
-
 
     function initTheme() {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const savedTheme = localStorage.getItem('theme');
-      
       if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
       } else if (prefersDark) {
@@ -398,7 +350,6 @@
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
     }
@@ -409,13 +360,12 @@
       loadPhotosData();
     });
 
-    // Pause slideshow on hover
-    document.addEventListener('DOMContentLoaded', () => {
-      const carousel = document.querySelector('.carousel-container');
-      if (carousel) {
-        carousel.addEventListener('mouseenter', stopSlideshow);
-        carousel.addEventListener('mouseleave', startSlideshow);
-      }
+    document.addEventListener('keydown', (e) => {
+      const lb = document.querySelector('.lightbox');
+      if (!lb || !lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') lightboxNav(1);
+      if (e.key === 'ArrowLeft') lightboxNav(-1);
     });
   </script>
 </head>
@@ -430,17 +380,22 @@
 </header>
 
 <main>
-  <section id="photos">
-    <h2>Photos</h2>
-
-    <div class="carousel-container">
-      <!-- Carousel slides will be loaded dynamically -->
-    </div>
-    <div class="carousel-dots">
-      <!-- Dots will be loaded dynamically -->
-    </div>
-  </section>
+  <h2>Photos</h2>
+  <div class="photo-gallery">
+    <!-- Photos loaded dynamically -->
+  </div>
 </main>
+
+<!-- Lightbox -->
+<div class="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">close</button>
+  <button class="lightbox-prev" onclick="event.stopPropagation(); lightboxNav(-1)">← prev</button>
+  <img src="" alt="" onclick="event.stopPropagation()">
+  <button class="lightbox-next" onclick="event.stopPropagation(); lightboxNav(1)">next →</button>
+  <div class="lightbox-caption"></div>
+</div>
+
+<div class="footer-text">vibecoded with Claude in Paris</div>
 
 </body>
 </html>
