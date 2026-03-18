@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload Video</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1A0F08;
+      --text: #E8E0D8;
+      --muted: #C4B8A8;
+      --border: #4A3C2A;
+      --accent: #8B7355;
+      --input-bg: #2A1F15;
+      --btn-bg: #E8E0D8;
+      --btn-text: #1A0F08;
+      --success: #7A9E7E;
+      --error: #C47A7A;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 15px;
+    }
+
+    /* ── Setup screen ── */
+    #setup {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 40px 24px;
+      gap: 20px;
+    }
+
+    #setup h1 {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    #setup input {
+      width: 100%;
+      max-width: 380px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      padding: 14px 16px;
+      outline: none;
+    }
+
+    #setup input:focus { border-color: var(--accent); }
+
+    #setup button {
+      width: 100%;
+      max-width: 380px;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 6px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 15px;
+      padding: 14px;
+      cursor: pointer;
+    }
+
+    /* ── Upload screen ── */
+    #upload {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Video picker area */
+    #picker-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: var(--input-bg);
+      border-bottom: 1px solid var(--border);
+      min-height: 200px;
+    }
+
+    #picker-area.has-video { background: #000; }
+
+    #picker-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      user-select: none;
+    }
+
+    #picker-hint .icon { font-size: 36px; line-height: 1; }
+    #picker-hint .label { font-size: 13px; }
+
+    #preview-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    #file-size {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+
+    #file-input { display: none; }
+
+    /* Form area */
+    #form-area {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+    }
+
+    .field input:focus { border-color: var(--accent); }
+    .field input::placeholder { color: var(--accent); opacity: 0.5; }
+
+    #upload-btn {
+      width: 100%;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 6px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 15px;
+      padding: 14px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: opacity 0.2s;
+    }
+
+    #upload-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* Progress bar */
+    #progress-wrap {
+      display: none;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    #status {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      min-height: 18px;
+    }
+
+    #status.success { color: var(--success); }
+    #status.error   { color: var(--error); }
+
+    #reset-link {
+      text-align: center;
+      font-size: 12px;
+      color: var(--border);
+      cursor: pointer;
+    }
+
+    #reset-link:hover { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<div id="setup">
+  <h1>GitHub token required</h1>
+  <input id="setup-token" type="password" placeholder="ghp_..." autocomplete="off" spellcheck="false">
+  <button onclick="saveToken()">Save</button>
+</div>
+
+<div id="upload">
+  <div id="picker-area" onclick="document.getElementById('file-input').click()">
+    <div id="picker-hint">
+      <div class="icon">⊕</div>
+      <div class="label">tap to choose a video</div>
+    </div>
+    <video id="preview-video" muted loop playsinline></video>
+    <div id="file-size"></div>
+  </div>
+
+  <input type="file" id="file-input" accept="video/*" onchange="onFileSelected(this)">
+
+  <div id="form-area">
+    <div class="field">
+      <div class="field-label">filename</div>
+      <input id="filename-input" type="text" placeholder="video.mov" spellcheck="false">
+    </div>
+    <div id="progress-wrap"><div id="progress-bar"></div></div>
+    <button id="upload-btn" onclick="doUpload()" disabled>Upload</button>
+    <div id="status"></div>
+    <div id="reset-link" onclick="resetToken()">change token</div>
+  </div>
+</div>
+
+<script>
+  const REPO   = 'louiscoppey/website';
+  const BRANCH = 'main';
+  const API    = 'https://api.github.com';
+
+  let selectedFile = null;
+  let previewURL   = null;
+
+  function init() {
+    const token = localStorage.getItem('github_token');
+    show(token ? 'upload' : 'setup');
+  }
+
+  function show(screen) {
+    document.getElementById('setup').style.display  = screen === 'setup'  ? 'flex' : 'none';
+    document.getElementById('upload').style.display = screen === 'upload' ? 'flex' : 'none';
+  }
+
+  function saveToken() {
+    const val = document.getElementById('setup-token').value.trim();
+    if (!val) return;
+    localStorage.setItem('github_token', val);
+    show('upload');
+  }
+
+  function resetToken() {
+    localStorage.removeItem('github_token');
+    show('setup');
+  }
+
+  function onFileSelected(input) {
+    const file = input.files[0];
+    if (!file) return;
+    selectedFile = file;
+
+    // Video preview
+    if (previewURL) URL.revokeObjectURL(previewURL);
+    previewURL = URL.createObjectURL(file);
+    const vid = document.getElementById('preview-video');
+    vid.src = previewURL;
+    vid.style.display = 'block';
+    vid.play().catch(() => {});
+
+    document.getElementById('picker-hint').style.display = 'none';
+    document.getElementById('picker-area').classList.add('has-video');
+
+    // Show file size
+    const mb = (file.size / 1024 / 1024).toFixed(1);
+    document.getElementById('file-size').textContent = `${mb} MB`;
+
+    // Pre-fill filename
+    document.getElementById('filename-input').value = file.name.replace(/\s+/g, '_');
+    document.getElementById('upload-btn').disabled = false;
+    setStatus('', '');
+  }
+
+  async function doUpload() {
+    const token    = localStorage.getItem('github_token');
+    const filename = document.getElementById('filename-input').value.trim();
+    if (!selectedFile || !filename) return;
+
+    document.getElementById('upload-btn').disabled = true;
+    showProgress(0);
+    setStatus('Reading file…', '');
+
+    try {
+      // 1. Read as base64
+      const base64 = await toBase64(selectedFile);
+      showProgress(30);
+
+      // 2. Upload video file
+      setStatus('Uploading video…', '');
+      await githubPut(`contents/videos/${filename}`, {
+        message: `nature: add ${filename}`,
+        content: base64,
+        branch:  BRANCH,
+      }, token);
+      showProgress(80);
+
+      // 3. Append to Videos.csv
+      setStatus('Updating Videos.csv…', '');
+      await appendToCSV(filename, token);
+      showProgress(100);
+
+      setStatus('Done ✓', 'success');
+      setTimeout(() => hideProgress(), 1000);
+
+      // Reset
+      selectedFile = null;
+      if (previewURL) { URL.revokeObjectURL(previewURL); previewURL = null; }
+      document.getElementById('file-input').value = '';
+      document.getElementById('preview-video').style.display = 'none';
+      document.getElementById('preview-video').src = '';
+      document.getElementById('picker-hint').style.display = 'flex';
+      document.getElementById('picker-area').classList.remove('has-video');
+      document.getElementById('filename-input').value = '';
+      document.getElementById('file-size').textContent = '';
+      document.getElementById('upload-btn').disabled = true;
+
+    } catch (err) {
+      console.error(err);
+      setStatus(err.message || 'Upload failed', 'error');
+      hideProgress();
+      document.getElementById('upload-btn').disabled = false;
+    }
+  }
+
+  function setStatus(msg, cls) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = cls;
+  }
+
+  function showProgress(pct) {
+    document.getElementById('progress-wrap').style.display = 'block';
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  function hideProgress() {
+    document.getElementById('progress-wrap').style.display = 'none';
+    document.getElementById('progress-bar').style.width = '0%';
+  }
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload  = e => resolve(e.target.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function githubPut(path, body, token) {
+    const res = await fetch(`${API}/repos/${REPO}/${path}`, {
+      method:  'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `GitHub error ${res.status}`);
+    }
+    return res.json();
+  }
+
+  async function appendToCSV(filename, token) {
+    const res = await fetch(`${API}/repos/${REPO}/contents/Videos.csv`, {
+      headers: { 'Authorization': `token ${token}` },
+    });
+    if (!res.ok) throw new Error('Could not fetch Videos.csv');
+    const data  = await res.json();
+    const text  = atob(data.content.replace(/\n/g, ''));
+    const newText = text.trimEnd() + `\n${filename},\n`;
+    const newB64  = btoa(unescape(encodeURIComponent(newText)));
+    await githubPut('contents/Videos.csv', {
+      message: `nature: add ${filename} to csv`,
+      content: newB64,
+      sha:     data.sha,
+      branch:  BRANCH,
+    }, token);
+  }
+
+  document.getElementById('setup-token').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveToken();
+  });
+
+  init();
+</script>
+</body>
+</html>
